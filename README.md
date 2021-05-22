@@ -1,0 +1,1 @@
+# content-aware-image-resizer

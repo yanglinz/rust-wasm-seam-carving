@@ -4,9 +4,15 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "test:fixtures": "node tests/images/fixtures.js",
+    "test": "jest --config=tests/jest.config.js ."
   },
   "devDependencies": {
+    "jest": "^26.6.3",
+    "jest-puppeteer": "^5.0.3",
+    "puppeteer": "^9.1.1",
+    "sharp": "^0.28.2",
     "vite": "^2.3.3"
   }
 }

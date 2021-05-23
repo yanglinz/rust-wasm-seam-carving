@@ -103,7 +103,10 @@ dist
 # TernJS port file
 .tern-port
 
+# Vite
+dist
+dist-ssr
+*.local
 
 # Added by cargo
-
 /target

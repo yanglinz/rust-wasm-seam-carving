@@ -16,4 +16,14 @@ function App() {
   );
 }
 
-ReactDOM.render(<App />, document.getElementById("app"));
+function documentReady(fn) {
+  if (document.readyState != "loading") {
+    fn();
+  } else {
+    document.addEventListener("DOMContentLoaded", fn);
+  }
+}
+
+documentReady(() => {
+  ReactDOM.render(<App />, document.getElementById("app"));
+});

@@ -44,8 +44,20 @@ function setupCanvas() {
   };
 }
 
+function setupRust() {
+  const rust = import("../pkg/content_aware_image_resizer_bg.wasm");
+
+  rust
+    .then((m) => {
+      console.log(m)
+      m.greet("World!");
+    })
+    .catch(console.error);
+}
+
 function setup() {
-  setupCanvas();
+  // setupCanvas();
+  setupRust();
 }
 
 documentReady(setup);

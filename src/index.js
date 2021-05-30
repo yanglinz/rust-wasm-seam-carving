@@ -4,7 +4,7 @@ import Resizer from "./resizer";
 
 if (module.hot) {
   // Disable HMR in development
-  module.hot.dispose();
+  module.hot.decline();
 }
 
 function App() {

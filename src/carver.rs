@@ -18,6 +18,6 @@ pub fn resize(ctx: &CanvasRenderingContext2d) -> Result<(), JsValue> {
     let height = 150;
 
     let mut image_data = get_new_image_data();
-    let foo = ImageData::new_with_u8_clamped_array_and_sh(Clamped(&mut image_data), width, height)?;
-    ctx.put_image_data(&foo, 0.0, 0.0)
+    let data = ImageData::new_with_u8_clamped_array_and_sh(Clamped(&mut image_data), width, height)?;
+    ctx.put_image_data(&data, 0.0, 0.0)
 }

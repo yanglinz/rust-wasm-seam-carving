@@ -14,7 +14,7 @@
     ]
   },
   "scripts": {
-    "dev": "react-app-rewired start",
+    "dev": "FAST_REFRESH=true react-app-rewired start",
     "build": "react-app-rewired build",
     "test:fixtures": "node tests/images/fixtures.js",
     "test": "react-app-rewired test"

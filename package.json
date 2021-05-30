@@ -15,7 +15,7 @@
   },
   "scripts": {
     "wasm-pack-dev": "wasm-pack --verbose build --out-dir=src/pkg --out-name=index --dev --no-typescript",
-    "dev:rs": "cargo watch -i .gitignore -i 'src/pkg/*' -s 'yarn wasm-pack-dev'",
+    "dev:rs": "cargo watch -i .gitignore -i 'src/pkg/*' -i 'src/**/*.{js,html}' -s 'yarn wasm-pack-dev'",
     "dev:js": "FAST_REFRESH=true react-app-rewired start",
     "dev": "run-p dev:*",
     "build": "react-app-rewired build",

@@ -1,14 +1,5 @@
 import { useEffect } from "react";
 
-function loadWasm() {
-  import("./pkg")
-    .then((module) => {
-      const val = module.resize();
-      console.log(val);
-    })
-    .catch(console.error);
-}
-
 function loadImage(canvas) {
   const ctx = canvas.getContext("2d");
 
@@ -37,8 +28,18 @@ function loadImage(canvas) {
   };
 }
 
-function handleResize(canvas) {
-  // TODO: implement this
+function carverRedize(canvas) {
+  function wasmResize(ctx) {
+    import("./pkg")
+      .then((module) => {
+        const val = module.resize(ctx);
+        console.log(val);
+      })
+      .catch(console.error);
+  }
+
+  const ctx = canvas.getContext("2d");
+  wasmResize(ctx);
 }
 
 function Resizer() {
@@ -49,7 +50,7 @@ function Resizer() {
 
   function handleResize() {
     const canvas = document.getElementById("app-canvas");
-    loadWasm();
+    carverRedize(canvas);
   }
 
   return (

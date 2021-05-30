@@ -1,11 +1,9 @@
 use wasm_bindgen::prelude::*;
+use web_sys::{CanvasRenderingContext2d};
+
+mod carver;
 
 #[wasm_bindgen]
-extern "C" {
-    fn alert(s: &str);
-}
-
-#[wasm_bindgen]
-pub fn greet(name: &str) {
-    alert(&format!("Hello, {}!", name));
+pub fn resize(ctx: &CanvasRenderingContext2d) -> Result<(), JsValue> {
+    return carver::resize(ctx)
 }

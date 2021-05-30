@@ -3,7 +3,8 @@ import { useEffect } from "react";
 function loadWasm() {
   import("./pkg")
     .then((module) => {
-      module.greet("foo");
+      const val = module.resize();
+      console.log(val);
     })
     .catch(console.error);
 }
@@ -48,6 +49,7 @@ function Resizer() {
 
   function handleResize() {
     const canvas = document.getElementById("app-canvas");
+    loadWasm();
   }
 
   return (

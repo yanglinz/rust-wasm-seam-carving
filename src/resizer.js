@@ -29,17 +29,14 @@ function loadImage(canvas) {
 }
 
 function carverRedize(canvas) {
-  function wasmResize(ctx) {
+  function wasmResize(...args) {
     import("./pkg")
-      .then((module) => {
-        const val = module.resize(ctx);
-        console.log(val);
-      })
+      .then((module) => module.resize(...args))
       .catch(console.error);
   }
 
   const ctx = canvas.getContext("2d");
-  wasmResize(ctx);
+  wasmResize(ctx, canvas.width, canvas.height, canvas.width - 40, canvas.height);
 }
 
 function Resizer() {

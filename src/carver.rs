@@ -18,7 +18,7 @@ struct ImagePixel {
     a: u8,
 
     // Metadata
-    energy: i32,
+    energy: f32,
     status: PixelState,
 }
 
@@ -51,10 +51,22 @@ fn get_energy(
 }
 
 fn mark_energy_map(image_pixel_matrix: &mut Vec<Vec<ImagePixel>>) {
+    let pixel_matrix_clone = image_pixel_matrix.clone();
+    let matrix_width = image_pixel_matrix[0].len();
+
     for (h, row) in image_pixel_matrix.iter_mut().enumerate() {
         for (w, pixel) in row.iter_mut().enumerate() {
-            // TODO: Calculate the actual energy
-            pixel.energy = 10
+            let mut left: Option<ImagePixel> = None;
+            if w > 0 {
+                left = Some(pixel_matrix_clone[h as usize][w - 1 as usize]);
+            }
+
+            let mut right: Option<ImagePixel> = None;
+            if w < matrix_width - 1 {
+                right = Some(pixel_matrix_clone[h as usize][w + 1 as usize]);
+            }
+
+            pixel.energy = get_energy(pixel.clone(), left, right);
         }
     }
 }
@@ -63,7 +75,7 @@ fn mark_seam(image_pixel_matrix: &mut Vec<Vec<ImagePixel>>) {
     fn mark_seam_row(image_pixel_row: &mut Vec<ImagePixel>) -> u8 {
         for p in image_pixel_row {
             // TODO: Use real real seam algo
-            if p.energy == 10 {
+            if p.energy == 10.0 {
                 p.status = PixelState::Seam;
                 return 0;
             }
@@ -81,7 +93,7 @@ fn remove_seam(image_pixel_matrix: &mut Vec<Vec<ImagePixel>>) {
     fn remove_seam_row(image_pixel_row: &mut Vec<ImagePixel>) -> u8 {
         // Shift everything to last column
         for p in image_pixel_row {
-            if p.energy == 10 {
+            if p.energy == 10.0 {
                 p.status = PixelState::Seam;
                 return 0;
             }
@@ -107,7 +119,7 @@ fn get_image_pixel_matrix(
         g: 0,
         b: 0,
         a: 0,
-        energy: -1,
+        energy: -1.0,
         status: PixelState::Live,
     };
     let mut matrix = vec![vec![placeholder; w_matrix]; h_matrix];
@@ -127,7 +139,7 @@ fn get_image_pixel_matrix(
                 g: g,
                 b: b,
                 a: a,
-                energy: -1,
+                energy: -1.0,
                 status: PixelState::Live,
             };
             matrix[h as usize][w as usize] = pixel;
@@ -177,7 +189,7 @@ mod tests {
             g: g,
             b: b,
             a: 255,
-            energy: -1,
+            energy: -1.0,
             status: PixelState::Live,
         };
     }

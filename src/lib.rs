@@ -1,7 +1,7 @@
 use wasm_bindgen::prelude::*;
 use web_sys::CanvasRenderingContext2d;
 
-mod carver;
+mod rs;
 
 #[wasm_bindgen]
 pub fn resize(
@@ -11,7 +11,7 @@ pub fn resize(
     width_target: u32,
     height_target: u32,
 ) -> Result<(), JsValue> {
-    return carver::resize(
+    return rs::resizer::resize(
         ctx,
         width_current,
         height_current,

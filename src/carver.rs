@@ -1,6 +1,4 @@
-use wasm_bindgen::prelude::*;
-use wasm_bindgen::Clamped;
-use web_sys::{CanvasRenderingContext2d, ImageData};
+use web_sys::ImageData;
 
 extern crate web_sys;
 
@@ -22,6 +20,34 @@ struct ImagePixel {
     // Metadata
     energy: i32,
     status: PixelState,
+}
+
+fn get_energy(
+    pixel: ImagePixel,
+    pixel_left: Option<ImagePixel>,
+    pixel_right: Option<ImagePixel>,
+) -> f32 {
+    let p_r = pixel.r as f32;
+    let p_g = pixel.g as f32;
+    let p_b = pixel.b as f32;
+
+    let mut left_energy = 0.0;
+    for l in pixel_left.iter() {
+        let l_r = l.r as f32;
+        let l_g = l.g as f32;
+        let l_b = l.b as f32;
+        left_energy = (p_r - l_r).powi(2) + (p_g - l_g).powi(2) + (p_b - l_b).powi(2)
+    }
+
+    let mut right_energy = 0.0;
+    for r in pixel_right.iter() {
+        let r_r = r.r as f32;
+        let r_g = r.g as f32;
+        let r_b = r.b as f32;
+        right_energy = (p_r - r_r).powi(2) + (p_g - r_g).powi(2) + (p_b - r_b).powi(2)
+    }
+
+    return (left_energy + right_energy).sqrt();
 }
 
 fn mark_energy_map(image_pixel_matrix: &mut Vec<Vec<ImagePixel>>) {
@@ -111,7 +137,7 @@ fn get_image_pixel_matrix(
     return matrix;
 }
 
-fn get_resized_image_data(
+pub fn get_resized_image_data(
     image_data: ImageData,
     width_current: u32,
     height_current: u32,
@@ -141,27 +167,44 @@ fn get_resized_image_data(
     return data;
 }
 
-pub fn resize(
-    ctx: &CanvasRenderingContext2d,
-    width_current: u32,
-    height_current: u32,
-    width_target: u32,
-    height_target: u32,
-) -> Result<(), JsValue> {
-    let width = width_current;
-    let height = height_current;
-    let width_select = width_current as f64;
-    let height_select = height_current as f64;
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    let image_data_current = ctx.get_image_data(0.0, 0.0, width_select, height_select)?;
-    let mut image_data = get_resized_image_data(
-        image_data_current,
-        width_current,
-        height_current,
-        width_target,
-        height_target,
-    );
-    let data =
-        ImageData::new_with_u8_clamped_array_and_sh(Clamped(&mut image_data), width, height)?;
-    ctx.put_image_data(&data, 0.0, 0.0)
+    fn get_pixel(r: u8, g: u8, b: u8) -> ImagePixel {
+        return ImagePixel {
+            r: r,
+            g: g,
+            b: b,
+            a: 255,
+            energy: -1,
+            status: PixelState::Live,
+        };
+    }
+
+    #[test]
+    fn test_get_pixel_energy_same_pixel() {
+        let energy = get_energy(
+            get_pixel(0, 0, 0),
+            Some(get_pixel(0, 0, 0)),
+            Some(get_pixel(0, 0, 0)),
+        );
+        assert_eq!(energy, 0.0);
+    }
+
+    #[test]
+    fn test_get_pixel_energy_nones() {
+        let energy = get_energy(get_pixel(0, 0, 0), None, None);
+        assert_eq!(energy, 0.0);
+    }
+
+    #[test]
+    fn test_get_pixel_energy_real() {
+        let energy = get_energy(
+            get_pixel(0, 0, 255),
+            Some(get_pixel(0, 128, 0)),
+            Some(get_pixel(255, 0, 0)),
+        );
+        assert_eq!(energy, 459.8467);
+    }
 }

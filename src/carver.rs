@@ -26,9 +26,28 @@ fn get_energy(
     pixel: ImagePixel,
     pixel_left: Option<ImagePixel>,
     pixel_right: Option<ImagePixel>,
-) -> u64 {
-    // Pixel energy
-    return 123;
+) -> f32 {
+    let p_r = pixel.r as f32;
+    let p_g = pixel.g as f32;
+    let p_b = pixel.b as f32;
+
+    let mut left_energy = 0.0;
+    for l in pixel_left.iter() {
+        let l_r = l.r as f32;
+        let l_g = l.g as f32;
+        let l_b = l.b as f32;
+        left_energy = (p_r - l_r).powi(2) + (p_g - l_g).powi(2) + (p_b - l_b).powi(2)
+    }
+
+    let mut right_energy = 0.0;
+    for r in pixel_right.iter() {
+        let r_r = r.r as f32;
+        let r_g = r.g as f32;
+        let r_b = r.b as f32;
+        right_energy = (p_r - r_r).powi(2) + (p_g - r_g).powi(2) + (p_b - r_b).powi(2)
+    }
+
+    return (left_energy + right_energy).sqrt();
 }
 
 fn mark_energy_map(image_pixel_matrix: &mut Vec<Vec<ImagePixel>>) {
@@ -152,21 +171,40 @@ pub fn get_resized_image_data(
 mod tests {
     use super::*;
 
-    fn get_pixel(r: u8, g: u8, b: u8, a: u8) -> ImagePixel {
+    fn get_pixel(r: u8, g: u8, b: u8) -> ImagePixel {
         return ImagePixel {
             r: r,
             g: g,
             b: b,
-            a: a,
+            a: 255,
             energy: -1,
             status: PixelState::Live,
         };
     }
 
     #[test]
-    fn test_get_pixel_energy() {
-        
-        let energy = get_energy(pixel, None, None);
-        assert_eq!(energy, 1);
+    fn test_get_pixel_energy_same_pixel() {
+        let energy = get_energy(
+            get_pixel(0, 0, 0),
+            Some(get_pixel(0, 0, 0)),
+            Some(get_pixel(0, 0, 0)),
+        );
+        assert_eq!(energy, 0.0);
+    }
+
+    #[test]
+    fn test_get_pixel_energy_nones() {
+        let energy = get_energy(get_pixel(0, 0, 0), None, None);
+        assert_eq!(energy, 0.0);
+    }
+
+    #[test]
+    fn test_get_pixel_energy_real() {
+        let energy = get_energy(
+            get_pixel(0, 0, 255),
+            Some(get_pixel(0, 128, 0)),
+            Some(get_pixel(255, 0, 0)),
+        );
+        assert_eq!(energy, 459.8467);
     }
 }

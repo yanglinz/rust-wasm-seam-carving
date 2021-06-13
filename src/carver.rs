@@ -22,6 +22,15 @@ struct ImagePixel {
     status: PixelState,
 }
 
+fn get_energy(
+    pixel: ImagePixel,
+    pixel_left: Option<ImagePixel>,
+    pixel_right: Option<ImagePixel>,
+) -> u64 {
+    // Pixel energy
+    return 123;
+}
+
 fn mark_energy_map(image_pixel_matrix: &mut Vec<Vec<ImagePixel>>) {
     for (h, row) in image_pixel_matrix.iter_mut().enumerate() {
         for (w, pixel) in row.iter_mut().enumerate() {
@@ -137,4 +146,27 @@ pub fn get_resized_image_data(
     }
 
     return data;
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn get_pixel(r: u8, g: u8, b: u8, a: u8) -> ImagePixel {
+        return ImagePixel {
+            r: r,
+            g: g,
+            b: b,
+            a: a,
+            energy: -1,
+            status: PixelState::Live,
+        };
+    }
+
+    #[test]
+    fn test_get_pixel_energy() {
+        
+        let energy = get_energy(pixel, None, None);
+        assert_eq!(energy, 1);
+    }
 }

@@ -20,6 +20,7 @@ enum DirectionY {
     Bottom,
 }
 
+// Zero-indexed representation of image pixel coordinates
 #[derive(Copy, Clone)]
 struct PixelPosition {
     x: u32,
@@ -73,15 +74,16 @@ struct ImagePixel {
 // Similar to the ImageData.data from the web canvas API, we'll represent the
 // 2D image internally with a 1D vector/array. This is a helper function to convert
 // the (x, y) coordinates of the 2D "matrix" into the index of the 1D vector.
-fn get_pixel_index(context: ImageContext, h_index: usize, w_index: usize) -> usize {
-    return (context.width as usize * h_index) + w_index;
+fn get_pixel_index(context: ImageContext, pos: PixelPosition) -> usize {
+    let index = (context.width * pos.x) + pos.y;
+    return index as usize;
 }
 
 // Same as the get_pixel_index helper, just with the inverse logic.
-fn get_pixel_matrix_coordinates(context: ImageContext, index: usize) -> (usize, usize) {
-    let w = index / context.width as usize;
-    let h = index.rem_euclid(context.width as usize);
-    return (h, w);
+fn get_pixel_position(context: ImageContext, index: usize) -> PixelPosition {
+    let x = index as u32 / context.width;
+    let y = (index as u32).rem_euclid(context.width);
+    return PixelPosition { x: x, y: y };
 }
 
 // Helper to get a given pixel's neighbor index
@@ -91,57 +93,58 @@ fn get_neighbor_pixel_index(
     current_index: usize,
     direction: RelativeDirection,
 ) -> Option<usize> {
-    let (h, w) = get_pixel_matrix_coordinates(context, current_index);
+    return None;
+    // let (h, w) = get_pixel_position(context, current_index);
 
-    let is_top = direction == RelativeDirection::Top
-        || direction == RelativeDirection::TopLeft
-        || direction == RelativeDirection::TopRight;
-    let is_bottom = direction == RelativeDirection::BottomLeft
-        || direction == RelativeDirection::Bottom
-        || direction == RelativeDirection::BottomRight;
-    let is_left = direction == RelativeDirection::TopLeft
-        || direction == RelativeDirection::Left
-        || direction == RelativeDirection::BottomLeft;
-    let is_right = direction == RelativeDirection::TopRight
-        || direction == RelativeDirection::Right
-        || direction == RelativeDirection::BottomRight;
+    // let is_top = direction == RelativeDirection::Top
+    //     || direction == RelativeDirection::TopLeft
+    //     || direction == RelativeDirection::TopRight;
+    // let is_bottom = direction == RelativeDirection::BottomLeft
+    //     || direction == RelativeDirection::Bottom
+    //     || direction == RelativeDirection::BottomRight;
+    // let is_left = direction == RelativeDirection::TopLeft
+    //     || direction == RelativeDirection::Left
+    //     || direction == RelativeDirection::BottomLeft;
+    // let is_right = direction == RelativeDirection::TopRight
+    //     || direction == RelativeDirection::Right
+    //     || direction == RelativeDirection::BottomRight;
 
-    // Top edge
-    if h == 0 && is_top {
-        return None;
-    }
-    // Bottom edge
-    if h == context.width as usize && is_bottom {
-        return None;
-    }
-    // Left edge
-    if w == 0 && is_left {
-        return None;
-    }
-    if w == context.width as usize && is_right {
-        return None;
-    }
+    // // Top edge
+    // if h == 0 && is_top {
+    //     return None;
+    // }
+    // // Bottom edge
+    // if h == context.width as usize && is_bottom {
+    //     return None;
+    // }
+    // // Left edge
+    // if w == 0 && is_left {
+    //     return None;
+    // }
+    // if w == context.width as usize && is_right {
+    //     return None;
+    // }
 
-    let mut offset_h: i8 = 0;
-    let mut offset_w: i8 = 0;
-    if is_top {
-        offset_h = 1;
-    }
-    if is_bottom {
-        offset_h = -1;
-    }
-    if is_left {
-        offset_w = -1;
-    }
-    if is_right {
-        offset_w = 1;
-    }
+    // let mut offset_h: i8 = 0;
+    // let mut offset_w: i8 = 0;
+    // if is_top {
+    //     offset_h = 1;
+    // }
+    // if is_bottom {
+    //     offset_h = -1;
+    // }
+    // if is_left {
+    //     offset_w = -1;
+    // }
+    // if is_right {
+    //     offset_w = 1;
+    // }
 
-    return Some(get_pixel_index(
-        context,
-        h + offset_h as usize,
-        w + offset_w as usize,
-    ));
+    // return Some(get_pixel_index(
+    //     context,
+    //     h + offset_h as usize,
+    //     w + offset_w as usize,
+    // ));
 }
 
 // We can initialize the image "matrix" with some placeholder values.
@@ -178,8 +181,11 @@ fn get_image_pixel_matrix(context: ImageContext, image_data: ImageData) -> Vec<I
                 seam_energy: -1.0,
                 status: PixelState::Live,
             };
-
-            matrix[get_pixel_index(context, h, w)] = pixel;
+            let pos = PixelPosition {
+                x: w as u32,
+                y: h as u32,
+            };
+            matrix[get_pixel_index(context, pos)] = pixel;
         }
     }
 
@@ -225,15 +231,15 @@ fn mark_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixe
     // TODO: We'll need to account for dead pixels
     for (i, pixel) in image_pixel_matrix.iter_mut().enumerate() {
         let mut left: Option<ImagePixel> = None;
-        let (w, h) = get_pixel_matrix_coordinates(context, i as usize);
-        if w > 0 {
-            left = Some(pixel_matrix_clone[get_pixel_index(context, h, w - 1)]);
-        }
+        // let pos = get_pixel_position(context, i as usize);
+        // if w > 0 {
+        //     left = Some(pixel_matrix_clone[get_pixel_index(context, h, w - 1)]);
+        // }
 
         let mut right: Option<ImagePixel> = None;
-        if w < matrix_width - 1 {
-            right = Some(pixel_matrix_clone[get_pixel_index(context, h, w + 1)]);
-        }
+        // if w < matrix_width - 1 {
+        //     right = Some(pixel_matrix_clone[get_pixel_index(context, h, w + 1)]);
+        // }
 
         pixel.energy = get_energy(pixel.clone(), left, right);
     }
@@ -245,7 +251,13 @@ fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
 
     for h in 0..h_matrix {
         for w in 0..w_matrix {
-            let index = get_pixel_index(context, h, w);
+            let index = get_pixel_index(
+                context,
+                PixelPosition {
+                    x: w as u32,
+                    y: h as u32,
+                },
+            );
 
             // For the first row, seam energy is just the copy of pixel energy
             if h == 0 {
@@ -256,29 +268,30 @@ fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
                 let is_left_border = w == 0;
                 // TODO: We'll have to consider dead pixels
                 let is_right_border = w == w_matrix;
-                if is_left_border {
-                    let center = image_pixel_matrix[get_pixel_index(context, h - 1, w)];
-                    let right = image_pixel_matrix[get_pixel_index(context, h - 1, w + 1)];
-                    let min = center.seam_energy.min(right.seam_energy);
-                    image_pixel_matrix[index].seam_energy =
-                        image_pixel_matrix[index].seam_energy + min;
-                } else if is_right_border {
-                    let center = image_pixel_matrix[get_pixel_index(context, h - 1, w)];
-                    let left = image_pixel_matrix[get_pixel_index(context, h - 1, w - 1)];
-                    let min = center.seam_energy.min(left.seam_energy);
-                    image_pixel_matrix[index].seam_energy =
-                        image_pixel_matrix[index].seam_energy + min;
-                } else {
-                    let center = image_pixel_matrix[get_pixel_index(context, h - 1, w)];
-                    let left = image_pixel_matrix[get_pixel_index(context, h - 1, w - 1)];
-                    let right = image_pixel_matrix[get_pixel_index(context, h - 1, w + 1)];
-                    let min = center
-                        .seam_energy
-                        .min(left.seam_energy)
-                        .min(right.seam_energy);
-                    image_pixel_matrix[index].seam_energy =
-                        image_pixel_matrix[index].seam_energy + min;
-                }
+
+                // if is_left_border {
+                //     let center = image_pixel_matrix[get_pixel_index(context, h - 1, w)];
+                //     let right = image_pixel_matrix[get_pixel_index(context, h - 1, w + 1)];
+                //     let min = center.seam_energy.min(right.seam_energy);
+                //     image_pixel_matrix[index].seam_energy =
+                //         image_pixel_matrix[index].seam_energy + min;
+                // } else if is_right_border {
+                //     let center = image_pixel_matrix[get_pixel_index(context, h - 1, w)];
+                //     let left = image_pixel_matrix[get_pixel_index(context, h - 1, w - 1)];
+                //     let min = center.seam_energy.min(left.seam_energy);
+                //     image_pixel_matrix[index].seam_energy =
+                //         image_pixel_matrix[index].seam_energy + min;
+                // } else {
+                //     let center = image_pixel_matrix[get_pixel_index(context, h - 1, w)];
+                //     let left = image_pixel_matrix[get_pixel_index(context, h - 1, w - 1)];
+                //     let right = image_pixel_matrix[get_pixel_index(context, h - 1, w + 1)];
+                //     let min = center
+                //         .seam_energy
+                //         .min(left.seam_energy)
+                //         .min(right.seam_energy);
+                //     image_pixel_matrix[index].seam_energy =
+                //         image_pixel_matrix[index].seam_energy + min;
+                // }
             }
         }
     }
@@ -301,7 +314,13 @@ fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
                 }
             }
         } else {
-            let current_index = get_pixel_index(context, y, x);
+            let current_index = get_pixel_index(
+                context,
+                PixelPosition {
+                    x: x as u32,
+                    y: y as u32,
+                },
+            );
             let top_left =
                 get_neighbor_pixel_index(context, current_index, RelativeDirection::TopLeft);
             let top = get_neighbor_pixel_index(context, current_index, RelativeDirection::Top);
@@ -319,7 +338,13 @@ fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
         }
 
         // Mark the pixel
-        let index = get_pixel_index(context, y, x);
+        let index = get_pixel_index(
+            context,
+            PixelPosition {
+                x: x as u32,
+                y: y as u32,
+            },
+        );
         image_pixel_matrix[index].status = PixelState::Seam;
     }
 
@@ -361,7 +386,13 @@ pub fn get_resized_image_data(
     let mut data = Vec::new();
     for h in 0..height_current {
         for w in 0..width_current {
-            let index = get_pixel_index(context, h as usize, w as usize);
+            let index = get_pixel_index(
+                context,
+                PixelPosition {
+                    x: w as u32,
+                    y: h as u32,
+                },
+            );
             let pixel = matrix[index];
             data.push(pixel.r);
             data.push(pixel.g);

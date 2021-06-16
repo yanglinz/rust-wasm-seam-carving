@@ -1,5 +1,3 @@
-use std::cmp;
-use std::iter;
 use web_sys::ImageData;
 
 extern crate web_sys;

@@ -84,8 +84,8 @@ fn get_pixel_index(context: ImageContext, pos: PixelPosition) -> usize {
 
 // Same as the get_pixel_index helper, just with the inverse logic.
 fn get_pixel_position(context: ImageContext, index: usize) -> PixelPosition {
-    let x = index as u32 / context.width;
-    let y = (index as u32).rem_euclid(context.width);
+    let x = (index as u32).rem_euclid(context.width);
+    let y = index as u32 / context.width;
     return PixelPosition { x: x, y: y };
 }
 
@@ -473,6 +473,40 @@ mod tests {
                 },
             );
             assert_eq!(index, *expected_index);
+        }
+    }
+
+    #[test]
+    fn test_get_pixel_position() {
+        let context = ImageContext {
+            width: 10,
+            height: 10,
+        };
+        let test_cases = vec![
+            // Tuple of index, expected_x, expected_y
+            (0, 0, 0),
+            (1, 1, 0),
+            (11, 1, 1),
+            (10, 0, 1),
+            (99, 9, 9),
+        ];
+        for (index, expected_x, expected_y) in test_cases.iter() {
+            let pos = get_pixel_position(context, *index);
+            assert_eq!(pos.x, *expected_x);
+            assert_eq!(pos.y, *expected_y);
+        }
+    }
+
+    #[test]
+    fn test_get_pixel_index_position_mirror() {
+        let context = ImageContext {
+            width: 10,
+            height: 10,
+        };
+        for i in 0..=99 {
+            let pos = get_pixel_position(context, i);
+            let index = get_pixel_index(context, pos);
+            assert_eq!(i, index);
         }
     }
 }

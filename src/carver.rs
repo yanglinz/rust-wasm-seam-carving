@@ -20,6 +20,17 @@ struct PixelPosition {
     y: u32,
 }
 
+// We need to:
+// 1. Make it easier to get neighbors
+// 2. Make it easier to track position of pixels
+
+// TODO:
+// 1. Refactor ImageContext - we really only need 1 width/height pair
+// 2. Add position tracking to ImagePixel
+// 3. Modify functions to take and return PixelPosition
+// 4. Add more tests with vec!
+// 5. Change all h/w to x/y where it makes sense
+
 #[derive(Copy, Clone, PartialEq)]
 enum RelativeDirection {
     TopLeft,
@@ -57,7 +68,8 @@ struct ImagePixel {
     b: u8,
     a: u8,
 
-    // Metadata
+    // Stateful metadata
+    // position: Foo
     energy: f32,
     seam_energy: f32,
     status: PixelState,

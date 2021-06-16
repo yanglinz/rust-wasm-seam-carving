@@ -3,6 +3,12 @@ use web_sys::ImageData;
 extern crate web_sys;
 
 #[derive(Copy, Clone)]
+struct ImageContext {
+    width: u32,
+    height: u32,
+}
+
+#[derive(Copy, Clone)]
 enum DirectionX {
     Left,
     Right,
@@ -25,7 +31,6 @@ struct PixelPosition {
 // 2. Make it easier to track position of pixels
 
 // TODO:
-// 1. Refactor ImageContext - we really only need 1 width/height pair
 // 2. Add position tracking to ImagePixel
 // 3. Modify functions to take and return PixelPosition
 // 4. Add more tests with vec!
@@ -41,16 +46,6 @@ enum RelativeDirection {
     BottomLeft,
     Bottom,
     BottomRight,
-}
-
-#[derive(Copy, Clone)]
-struct ImageContext {
-    start_width: u32,
-    start_height: u32,
-    end_width: u32,
-    end_height: u32,
-    iteration_width: u32,
-    iteration_height: u32,
 }
 
 #[derive(Copy, Clone, PartialEq)]
@@ -79,13 +74,13 @@ struct ImagePixel {
 // 2D image internally with a 1D vector/array. This is a helper function to convert
 // the (x, y) coordinates of the 2D "matrix" into the index of the 1D vector.
 fn get_pixel_matrix_index(context: ImageContext, h_index: usize, w_index: usize) -> usize {
-    return (context.start_width as usize * h_index) + w_index;
+    return (context.width as usize * h_index) + w_index;
 }
 
 // Same as the get_pixel_matrix_index helper, just with the inverse logic.
 fn get_pixel_matrix_coordinates(context: ImageContext, index: usize) -> (usize, usize) {
-    let w = index / context.start_width as usize;
-    let h = index.rem_euclid(context.start_width as usize);
+    let w = index / context.width as usize;
+    let h = index.rem_euclid(context.width as usize);
     return (h, w);
 }
 
@@ -116,14 +111,14 @@ fn get_neighbor_pixel_index(
         return None;
     }
     // Bottom edge
-    if h == context.iteration_height as usize && is_bottom {
+    if h == context.width as usize && is_bottom {
         return None;
     }
     // Left edge
     if w == 0 && is_left {
         return None;
     }
-    if w == context.iteration_width as usize && is_right {
+    if w == context.width as usize && is_right {
         return None;
     }
 
@@ -151,8 +146,8 @@ fn get_neighbor_pixel_index(
 
 // We can initialize the image "matrix" with some placeholder values.
 fn get_image_pixel_matrix(context: ImageContext, image_data: ImageData) -> Vec<ImagePixel> {
-    let w_matrix = context.start_width as usize;
-    let h_matrix = context.start_height as usize;
+    let w_matrix = context.width as usize;
+    let h_matrix = context.height as usize;
     let placeholder = ImagePixel {
         r: 0,
         g: 0,
@@ -225,7 +220,7 @@ fn mark_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixe
     // TODO: Consider splitting the read/write portion of the matrix
     // to avoid having to clone a fairly large vector in each iteration.
     let pixel_matrix_clone = image_pixel_matrix.clone();
-    let matrix_width = context.iteration_width as usize;
+    let matrix_width = context.width as usize;
 
     // TODO: We'll need to account for dead pixels
     for (i, pixel) in image_pixel_matrix.iter_mut().enumerate() {
@@ -245,8 +240,8 @@ fn mark_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixe
 }
 
 fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
-    let w_matrix = context.start_width as usize;
-    let h_matrix = context.start_height as usize;
+    let w_matrix = context.width as usize;
+    let h_matrix = context.height as usize;
 
     for h in 0..h_matrix {
         for w in 0..w_matrix {
@@ -346,24 +341,16 @@ pub fn get_resized_image_data(
     height_target: u32,
 ) -> Vec<u8> {
     let context = ImageContext {
-        start_width: width_current,
-        start_height: height_current,
-        end_width: width_target,
-        end_height: width_target,
-        iteration_width: 0,
-        iteration_height: 0,
+        width: width_current,
+        height: height_current,
     };
 
     let mut matrix = get_image_pixel_matrix(context, image_data);
     let steps = width_current - width_target;
     for s in 0..steps {
         let context = ImageContext {
-            start_width: width_current,
-            start_height: height_current,
-            end_width: width_target,
-            end_height: width_target,
-            iteration_width: width_current - s,
-            iteration_height: height_current,
+            width: width_current - s,
+            height: height_current,
         };
 
         mark_energy_map(context, &mut matrix);

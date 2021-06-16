@@ -4,16 +4,22 @@ use web_sys::ImageData;
 
 extern crate web_sys;
 
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Copy, Clone)]
 enum DirectionX {
     Left,
     Right,
 }
 
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Copy, Clone)]
 enum DirectionY {
     Top,
     Bottom,
+}
+
+#[derive(Copy, Clone)]
+struct PixelPosition {
+    x: u32,
+    y: u32,
 }
 
 #[derive(Copy, Clone, PartialEq)]

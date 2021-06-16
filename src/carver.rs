@@ -73,11 +73,11 @@ struct ImagePixel {
 // Similar to the ImageData.data from the web canvas API, we'll represent the
 // 2D image internally with a 1D vector/array. This is a helper function to convert
 // the (x, y) coordinates of the 2D "matrix" into the index of the 1D vector.
-fn get_pixel_matrix_index(context: ImageContext, h_index: usize, w_index: usize) -> usize {
+fn get_pixel_index(context: ImageContext, h_index: usize, w_index: usize) -> usize {
     return (context.width as usize * h_index) + w_index;
 }
 
-// Same as the get_pixel_matrix_index helper, just with the inverse logic.
+// Same as the get_pixel_index helper, just with the inverse logic.
 fn get_pixel_matrix_coordinates(context: ImageContext, index: usize) -> (usize, usize) {
     let w = index / context.width as usize;
     let h = index.rem_euclid(context.width as usize);
@@ -137,7 +137,7 @@ fn get_neighbor_pixel_index(
         offset_w = 1;
     }
 
-    return Some(get_pixel_matrix_index(
+    return Some(get_pixel_index(
         context,
         h + offset_h as usize,
         w + offset_w as usize,
@@ -179,7 +179,7 @@ fn get_image_pixel_matrix(context: ImageContext, image_data: ImageData) -> Vec<I
                 status: PixelState::Live,
             };
 
-            matrix[get_pixel_matrix_index(context, h, w)] = pixel;
+            matrix[get_pixel_index(context, h, w)] = pixel;
         }
     }
 
@@ -227,12 +227,12 @@ fn mark_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixe
         let mut left: Option<ImagePixel> = None;
         let (w, h) = get_pixel_matrix_coordinates(context, i as usize);
         if w > 0 {
-            left = Some(pixel_matrix_clone[get_pixel_matrix_index(context, h, w - 1)]);
+            left = Some(pixel_matrix_clone[get_pixel_index(context, h, w - 1)]);
         }
 
         let mut right: Option<ImagePixel> = None;
         if w < matrix_width - 1 {
-            right = Some(pixel_matrix_clone[get_pixel_matrix_index(context, h, w + 1)]);
+            right = Some(pixel_matrix_clone[get_pixel_index(context, h, w + 1)]);
         }
 
         pixel.energy = get_energy(pixel.clone(), left, right);
@@ -245,7 +245,7 @@ fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
 
     for h in 0..h_matrix {
         for w in 0..w_matrix {
-            let index = get_pixel_matrix_index(context, h, w);
+            let index = get_pixel_index(context, h, w);
 
             // For the first row, seam energy is just the copy of pixel energy
             if h == 0 {
@@ -257,21 +257,21 @@ fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
                 // TODO: We'll have to consider dead pixels
                 let is_right_border = w == w_matrix;
                 if is_left_border {
-                    let center = image_pixel_matrix[get_pixel_matrix_index(context, h - 1, w)];
-                    let right = image_pixel_matrix[get_pixel_matrix_index(context, h - 1, w + 1)];
+                    let center = image_pixel_matrix[get_pixel_index(context, h - 1, w)];
+                    let right = image_pixel_matrix[get_pixel_index(context, h - 1, w + 1)];
                     let min = center.seam_energy.min(right.seam_energy);
                     image_pixel_matrix[index].seam_energy =
                         image_pixel_matrix[index].seam_energy + min;
                 } else if is_right_border {
-                    let center = image_pixel_matrix[get_pixel_matrix_index(context, h - 1, w)];
-                    let left = image_pixel_matrix[get_pixel_matrix_index(context, h - 1, w - 1)];
+                    let center = image_pixel_matrix[get_pixel_index(context, h - 1, w)];
+                    let left = image_pixel_matrix[get_pixel_index(context, h - 1, w - 1)];
                     let min = center.seam_energy.min(left.seam_energy);
                     image_pixel_matrix[index].seam_energy =
                         image_pixel_matrix[index].seam_energy + min;
                 } else {
-                    let center = image_pixel_matrix[get_pixel_matrix_index(context, h - 1, w)];
-                    let left = image_pixel_matrix[get_pixel_matrix_index(context, h - 1, w - 1)];
-                    let right = image_pixel_matrix[get_pixel_matrix_index(context, h - 1, w + 1)];
+                    let center = image_pixel_matrix[get_pixel_index(context, h - 1, w)];
+                    let left = image_pixel_matrix[get_pixel_index(context, h - 1, w - 1)];
+                    let right = image_pixel_matrix[get_pixel_index(context, h - 1, w + 1)];
                     let min = center
                         .seam_energy
                         .min(left.seam_energy)
@@ -301,7 +301,7 @@ fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
                 }
             }
         } else {
-            let current_index = get_pixel_matrix_index(context, y, x);
+            let current_index = get_pixel_index(context, y, x);
             let top_left =
                 get_neighbor_pixel_index(context, current_index, RelativeDirection::TopLeft);
             let top = get_neighbor_pixel_index(context, current_index, RelativeDirection::Top);
@@ -319,7 +319,7 @@ fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
         }
 
         // Mark the pixel
-        let index = get_pixel_matrix_index(context, y, x);
+        let index = get_pixel_index(context, y, x);
         image_pixel_matrix[index].status = PixelState::Seam;
     }
 
@@ -361,7 +361,7 @@ pub fn get_resized_image_data(
     let mut data = Vec::new();
     for h in 0..height_current {
         for w in 0..width_current {
-            let index = get_pixel_matrix_index(context, h as usize, w as usize);
+            let index = get_pixel_index(context, h as usize, w as usize);
             let pixel = matrix[index];
             data.push(pixel.r);
             data.push(pixel.g);

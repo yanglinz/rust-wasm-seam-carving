@@ -5,6 +5,18 @@ use web_sys::ImageData;
 extern crate web_sys;
 
 #[derive(Copy, Clone, PartialEq)]
+enum DirectionX {
+    Left,
+    Right,
+}
+
+#[derive(Copy, Clone, PartialEq)]
+enum DirectionY {
+    Top,
+    Bottom,
+}
+
+#[derive(Copy, Clone, PartialEq)]
 enum RelativeDirection {
     TopLeft,
     Top,

@@ -75,7 +75,10 @@ struct ImagePixel {
 // 2D image internally with a 1D vector/array. This is a helper function to convert
 // the (x, y) coordinates of the 2D "matrix" into the index of the 1D vector.
 fn get_pixel_index(context: ImageContext, pos: PixelPosition) -> usize {
-    let index = (context.width * pos.x) + pos.y;
+    if pos.x >= context.width || pos.y >= context.height {
+        panic!("PixelPosition's x and/or y exceeds image dimensions");
+    }
+    let index = (context.width * pos.y) + pos.x;
     return index as usize;
 }
 
@@ -444,5 +447,32 @@ mod tests {
             Some(get_pixel(255, 0, 0)),
         );
         assert_eq!(energy, 459.8467);
+    }
+
+    #[test]
+    fn test_get_pixel_index() {
+        let context = ImageContext {
+            width: 10,
+            height: 10,
+        };
+        let test_cases = vec![
+            // Tuple of x, y, expected_index
+            (0, 0, 0),
+            (1, 0, 1),
+            (1, 1, 11),
+            (0, 1, 10),
+            (9, 9, 99),
+        ];
+
+        for (x, y, expected_index) in test_cases.iter() {
+            let index = get_pixel_index(
+                context,
+                PixelPosition {
+                    x: *x as u32,
+                    y: *y as u32,
+                },
+            );
+            assert_eq!(index, *expected_index);
+        }
     }
 }

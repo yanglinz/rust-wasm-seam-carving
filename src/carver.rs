@@ -8,18 +8,6 @@ struct ImageContext {
     height: u32,
 }
 
-#[derive(Copy, Clone)]
-enum DirectionX {
-    Left,
-    Right,
-}
-
-#[derive(Copy, Clone)]
-enum DirectionY {
-    Top,
-    Bottom,
-}
-
 // Zero-indexed representation of image pixel coordinates
 #[derive(Copy, Clone)]
 struct PixelPosition {
@@ -93,8 +81,9 @@ fn get_pixel_position(context: ImageContext, index: usize) -> PixelPosition {
 // TODO: This seems quite long. Can we shorten the fn?
 fn get_neighbor_pixel_index(
     context: ImageContext,
-    current_index: usize,
-    direction: RelativeDirection,
+    index: usize,
+    offset_x: i8,
+    offset_y: i8,
 ) -> Option<usize> {
     return None;
     // let (h, w) = get_pixel_position(context, current_index);
@@ -324,11 +313,9 @@ fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
                     y: y as u32,
                 },
             );
-            let top_left =
-                get_neighbor_pixel_index(context, current_index, RelativeDirection::TopLeft);
-            let top = get_neighbor_pixel_index(context, current_index, RelativeDirection::Top);
-            let top_right =
-                get_neighbor_pixel_index(context, current_index, RelativeDirection::TopRight);
+            let top_left = get_neighbor_pixel_index(context, current_index, -1, 1);
+            let top = get_neighbor_pixel_index(context, current_index, 0, 1);
+            let top_right = get_neighbor_pixel_index(context, current_index, 1, 1);
 
             if top_left.is_none() && top.is_none() && top_right.is_none() {
                 // Do nothing
@@ -507,6 +494,22 @@ mod tests {
             let pos = get_pixel_position(context, i);
             let index = get_pixel_index(context, pos);
             assert_eq!(i, index);
+        }
+    }
+
+    #[test]
+    fn test_get_neighbor_pixel_index() {
+        let context = ImageContext {
+            width: 10,
+            height: 10,
+        };
+        let test_cases = vec![
+            // Tuple of index, offset_x, offset_y, expected_index
+            (0, 0, 0, Some(0)),
+        ];
+        for (index, offset_x, offset_y, expected_index) in test_cases.iter() {
+            let index = get_neighbor_pixel_index(context, *index, *offset_x, *offset_y);
+            assert_eq!(index, *expected_index);
         }
     }
 }

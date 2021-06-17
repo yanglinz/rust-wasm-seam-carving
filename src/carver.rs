@@ -169,21 +169,20 @@ fn get_energy(
     let p_g = pixel.g as f32;
     let p_b = pixel.b as f32;
 
-    let mut left_energy = 0.0;
-    for l in pixel_left.iter() {
-        let l_r = l.r as f32;
-        let l_g = l.g as f32;
-        let l_b = l.b as f32;
-        left_energy = (p_r - l_r).powi(2) + (p_g - l_g).powi(2) + (p_b - l_b).powi(2)
-    }
-
-    let mut right_energy = 0.0;
-    for r in pixel_right.iter() {
-        let r_r = r.r as f32;
-        let r_g = r.g as f32;
-        let r_b = r.b as f32;
-        right_energy = (p_r - r_r).powi(2) + (p_g - r_g).powi(2) + (p_b - r_b).powi(2)
-    }
+    let left_energy = match pixel_left {
+        None => 0.0,
+        _ => {
+            let l = pixel_left.unwrap();
+            (p_r - l.r as f32).powi(2) + (p_g - l.g as f32).powi(2) + (p_b - l.b as f32).powi(2)
+        }
+    };
+    let right_energy = match pixel_right {
+        None => 0.0,
+        _ => {
+            let r = pixel_right.unwrap();
+            (p_r - r.r as f32).powi(2) + (p_g - r.g as f32).powi(2) + (p_b - r.b as f32).powi(2)
+        }
+    };
 
     return (left_energy + right_energy).sqrt();
 }

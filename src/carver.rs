@@ -124,24 +124,19 @@ fn get_image_pixel_matrix(context: ImageContext, image_data: ImageData) -> Vec<I
         for w in 0..w_matrix {
             let start = (h * w_matrix + w) * 4;
             let start_index = start as usize;
-
-            let r = data[start_index + 0];
-            let g = data[start_index + 1];
-            let b = data[start_index + 2];
-            let a = data[start_index + 3];
+            let pos = PixelPosition {
+                x: context.width,
+                y: context.height,
+            };
             let pixel = ImagePixel {
-                r: r,
-                g: g,
-                b: b,
-                a: a,
+                r: data[start_index + 0],
+                g: data[start_index + 1],
+                b: data[start_index + 2],
+                a: data[start_index + 3],
                 status: PixelStatus::Live,
-                position: PixelPosition { x: 0, y: 0 },
+                position: pos,
                 energy: -1.0,
                 seam_energy: -1.0,
-            };
-            let pos = PixelPosition {
-                x: w as u32,
-                y: h as u32,
             };
             matrix[get_pixel_index(context, pos)] = pixel;
         }

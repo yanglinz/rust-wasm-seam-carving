@@ -189,31 +189,30 @@ fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
     let w_matrix = context.width as usize;
     let h_matrix = context.height as usize;
 
-    for h in 0..h_matrix {
-        for w in 0..w_matrix {
+    for y in 0..h_matrix {
+        for x in 0..w_matrix {
             let index = get_pixel_index(
                 context,
                 PixelPosition {
-                    x: w as u32,
-                    y: h as u32,
+                    x: x as u32,
+                    y: y as u32,
                 },
             );
 
-            if h == 0 {
+            if y == 0 {
                 // For the first row, seam energy is just the copy of pixel energy
                 image_pixel_matrix[index].seam_energy = image_pixel_matrix[index].energy;
             } else {
                 // For all other rows, we have to calculate the minimum possible energy based on its top neighbors.
-                let top_left = get_neighbor_pixel(context, image_pixel_matrix, index, -1, 1);
-                let top = get_neighbor_pixel(context, image_pixel_matrix, index, 0, 1);
-                let top_right = get_neighbor_pixel(context, image_pixel_matrix, index, 1, 1);
-                let min_energy = vec![top_left, top, top_right]
+                let top_left = get_neighbor_pixel(context, image_pixel_matrix, index, -1, -1);
+                let top = get_neighbor_pixel(context, image_pixel_matrix, index, 0, -1);
+                let top_right = get_neighbor_pixel(context, image_pixel_matrix, index, 1, -1);
+                let min = vec![top_left, top, top_right]
                     .iter()
                     .filter(|p| p.is_some())
                     .map(|p| p.unwrap().seam_energy)
                     .fold(f32::INFINITY, |a, b| a.min(b));
-                image_pixel_matrix[index].seam_energy =
-                    image_pixel_matrix[index].seam_energy + min_energy
+                image_pixel_matrix[index].seam_energy = image_pixel_matrix[index].seam_energy + min;
             }
         }
     }
@@ -535,16 +534,16 @@ mod tests {
 
         #[rustfmt::skip]
         let rgb_matrix = vec![
-            (100, 100, 100), (0, 100, 0), (200, 200, 0), (0, 100, 0),  (100, 20, 0),
-            (100, 0, 0),     (0, 100, 0), (0, 100, 200), (150, 50, 0), (100, 20, 0),
-            (100, 0, 0),     (0, 100, 0), (0, 100, 200), (200, 20, 0), (100, 20, 0),
+            (100, 100, 100), (0, 100, 0), (200, 200, 0),  (0, 100, 0),  (90, 20, 0),
+            (10, 0, 0),      (0, 100, 0), (0, 100, 130),  (150, 50, 0), (120, 20, 0),
+            (111, 1, 4),     (0, 100, 0), (11, 50, 170),  (190, 20, 0), (110, 20, 0),
         ];
 
         #[rustfmt::skip]
         let expected_seam_energies = vec![
-            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
-            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
-            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+            141.42136, 264.57513, 316.22775, 253.9685, 120.41595, 
+            140.42136, 140.42136, 252.9685, 119.41595, 119.41595, 
+            139.42136, 139.42136, 118.41595, 118.41595, 118.41595
         ];
 
         #[rustfmt::skip]

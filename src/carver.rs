@@ -66,65 +66,36 @@ fn get_pixel_position(context: ImageContext, index: usize) -> PixelPosition {
 }
 
 // Helper to get a given pixel's neighbor index
-// TODO: This seems quite long. Can we shorten the fn?
 fn get_neighbor_pixel_index(
     context: ImageContext,
     index: usize,
     offset_x: i8,
     offset_y: i8,
 ) -> Option<usize> {
-    return None;
-    // let (h, w) = get_pixel_position(context, current_index);
+    let _valid_offset = [-1, 0, 1];
+    if !_valid_offset.contains(&offset_x) || !_valid_offset.contains(&offset_y) {
+        panic!("Received invalid offset values");
+    }
 
-    // let is_top = direction == RelativeDirection::Top
-    //     || direction == RelativeDirection::TopLeft
-    //     || direction == RelativeDirection::TopRight;
-    // let is_bottom = direction == RelativeDirection::BottomLeft
-    //     || direction == RelativeDirection::Bottom
-    //     || direction == RelativeDirection::BottomRight;
-    // let is_left = direction == RelativeDirection::TopLeft
-    //     || direction == RelativeDirection::Left
-    //     || direction == RelativeDirection::BottomLeft;
-    // let is_right = direction == RelativeDirection::TopRight
-    //     || direction == RelativeDirection::Right
-    //     || direction == RelativeDirection::BottomRight;
+    let pos = get_pixel_position(context, index);
+    let will_overflow = false
+        || (pos.y == 0 && offset_y == -1)
+        || (pos.y == context.height - 1 && offset_y == 1)
+        || (pos.x == 0 && offset_x == -1)
+        || (pos.x == context.width - 1 && offset_x == 1);
+    if will_overflow {
+        return None;
+    }
 
-    // // Top edge
-    // if h == 0 && is_top {
-    //     return None;
-    // }
-    // // Bottom edge
-    // if h == context.width as usize && is_bottom {
-    //     return None;
-    // }
-    // // Left edge
-    // if w == 0 && is_left {
-    //     return None;
-    // }
-    // if w == context.width as usize && is_right {
-    //     return None;
-    // }
-
-    // let mut offset_h: i8 = 0;
-    // let mut offset_w: i8 = 0;
-    // if is_top {
-    //     offset_h = 1;
-    // }
-    // if is_bottom {
-    //     offset_h = -1;
-    // }
-    // if is_left {
-    //     offset_w = -1;
-    // }
-    // if is_right {
-    //     offset_w = 1;
-    // }
-
-    // return Some(get_pixel_index(
-    //     context,
-    //     h + offset_h as usize,
-    //     w + offset_w as usize,
-    // ));
+    let new_x = pos.x as i8 + offset_x;
+    let new_y = pos.y as i8 + offset_y;
+    return Some(get_pixel_index(
+        context,
+        PixelPosition {
+            x: new_x as u32,
+            y: new_y as u32,
+        },
+    ));
 }
 
 // We can initialize the image "matrix" with some placeholder values.
@@ -494,6 +465,18 @@ mod tests {
         let test_cases = vec![
             // Tuple of index, offset_x, offset_y, expected_index
             (0, 0, 0, Some(0)),
+            (0, 1, 0, Some(1)),
+            (0, 0, 1, Some(10)),
+            (0, 1, 1, Some(11)),
+            (9, 0, 1, Some(19)),
+            (9, -1, 0, Some(8)),
+            // Edge cases
+            (0, -1, 0, None),
+            (0, 0, -1, None),
+            (9, 1, 0, None),
+            (9, 1, 1, None),
+            (99, 0, 1, None),
+            (99, 1, 1, None),
         ];
         for (index, offset_x, offset_y, expected_index) in test_cases.iter() {
             let index = get_neighbor_pixel_index(context, *index, *offset_x, *offset_y);

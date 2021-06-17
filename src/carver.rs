@@ -199,92 +199,74 @@ fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
                 },
             );
 
-            // For the first row, seam energy is just the copy of pixel energy
             if h == 0 {
+                // For the first row, seam energy is just the copy of pixel energy
                 image_pixel_matrix[index].seam_energy = image_pixel_matrix[index].energy;
             } else {
-                // TODO: Convert to use get_neighbor_pixel_index
-
-                let is_left_border = w == 0;
-                // TODO: We'll have to consider dead pixels
-                let is_right_border = w == w_matrix;
-
-                // if is_left_border {
-                //     let center = image_pixel_matrix[get_pixel_index(context, h - 1, w)];
-                //     let right = image_pixel_matrix[get_pixel_index(context, h - 1, w + 1)];
-                //     let min = center.seam_energy.min(right.seam_energy);
-                //     image_pixel_matrix[index].seam_energy =
-                //         image_pixel_matrix[index].seam_energy + min;
-                // } else if is_right_border {
-                //     let center = image_pixel_matrix[get_pixel_index(context, h - 1, w)];
-                //     let left = image_pixel_matrix[get_pixel_index(context, h - 1, w - 1)];
-                //     let min = center.seam_energy.min(left.seam_energy);
-                //     image_pixel_matrix[index].seam_energy =
-                //         image_pixel_matrix[index].seam_energy + min;
-                // } else {
-                //     let center = image_pixel_matrix[get_pixel_index(context, h - 1, w)];
-                //     let left = image_pixel_matrix[get_pixel_index(context, h - 1, w - 1)];
-                //     let right = image_pixel_matrix[get_pixel_index(context, h - 1, w + 1)];
-                //     let min = center
-                //         .seam_energy
-                //         .min(left.seam_energy)
-                //         .min(right.seam_energy);
-                //     image_pixel_matrix[index].seam_energy =
-                //         image_pixel_matrix[index].seam_energy + min;
-                // }
+                // For all other rows, we have to calculate the minimum possible energy based on its top neighbors.
+                let top_left = get_neighbor_pixel(context, image_pixel_matrix, index, -1, 1);
+                let top = get_neighbor_pixel(context, image_pixel_matrix, index, 0, 1);
+                let top_right = get_neighbor_pixel(context, image_pixel_matrix, index, 1, 1);
+                let min_energy = vec![top_left, top, top_right]
+                    .iter()
+                    .filter(|p| p.is_some())
+                    .map(|p| p.unwrap().seam_energy)
+                    .fold(f32::INFINITY, |a, b| a.min(b));
+                image_pixel_matrix[index].seam_energy =
+                    image_pixel_matrix[index].seam_energy + min_energy
             }
         }
     }
 
-    let mut x = 0;
-    let mut y = 0;
-    for h in (0..h_matrix).rev() {
-        let is_last = h == h_matrix - 1;
-        let is_first = h == 0;
-        if is_first || is_last {
-            let start = (h_matrix - 1) * w_matrix;
-            let end = h_matrix * w_matrix;
-            let last_row = &image_pixel_matrix[start..end];
-            let mut min_energy = 9999.0;
-            for (i, p) in last_row.iter().enumerate() {
-                if p.seam_energy < min_energy {
-                    min_energy = p.seam_energy;
-                    x = i;
-                    y = h;
-                }
-            }
-        } else {
-            let current_index = get_pixel_index(
-                context,
-                PixelPosition {
-                    x: x as u32,
-                    y: y as u32,
-                },
-            );
-            let top_left = get_neighbor_pixel_index(context, current_index, -1, 1);
-            let top = get_neighbor_pixel_index(context, current_index, 0, 1);
-            let top_right = get_neighbor_pixel_index(context, current_index, 1, 1);
+    // let mut x = 0;
+    // let mut y = 0;
+    // for h in (0..h_matrix).rev() {
+    //     let is_last = h == h_matrix - 1;
+    //     let is_first = h == 0;
+    //     if is_first || is_last {
+    //         let start = (h_matrix - 1) * w_matrix;
+    //         let end = h_matrix * w_matrix;
+    //         let last_row = &image_pixel_matrix[start..end];
+    //         let mut min_energy = 9999.0;
+    //         for (i, p) in last_row.iter().enumerate() {
+    //             if p.seam_energy < min_energy {
+    //                 min_energy = p.seam_energy;
+    //                 x = i;
+    //                 y = h;
+    //             }
+    //         }
+    //     } else {
+    //         let current_index = get_pixel_index(
+    //             context,
+    //             PixelPosition {
+    //                 x: x as u32,
+    //                 y: y as u32,
+    //             },
+    //         );
+    //         let top_left = get_neighbor_pixel_index(context, current_index, -1, 1);
+    //         let top = get_neighbor_pixel_index(context, current_index, 0, 1);
+    //         let top_right = get_neighbor_pixel_index(context, current_index, 1, 1);
 
-            if top_left.is_none() && top.is_none() && top_right.is_none() {
-                // Do nothing
-            } else {
-                // let pixels = vec![top_left, top, top_right];
-                // let min = pixels.into_iter().filter(|x| x.is_some()).min();
+    //         if top_left.is_none() && top.is_none() && top_right.is_none() {
+    //             // Do nothing
+    //         } else {
+    //             // let pixels = vec![top_left, top, top_right];
+    //             // let min = pixels.into_iter().filter(|x| x.is_some()).min();
 
-                // TODO: Attach index to pixels; it'll make the traversal a lot easier
-            }
-        }
+    //             // TODO: Attach index to pixels; it'll make the traversal a lot easier
+    //         }
+    //     }
 
-        // Mark the pixel
-        let index = get_pixel_index(
-            context,
-            PixelPosition {
-                x: x as u32,
-                y: y as u32,
-            },
-        );
-        image_pixel_matrix[index].status = PixelStatus::Seam;
-    }
+    // Mark the pixel
+    // let index = get_pixel_index(
+    //     context,
+    //     PixelPosition {
+    //         x: x as u32,
+    //         y: y as u32,
+    //     },
+    // );
+    // image_pixel_matrix[index].status = PixelStatus::Seam;
+    // }
 }
 
 fn remove_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
@@ -559,6 +541,13 @@ mod tests {
         ];
 
         #[rustfmt::skip]
+        let expected_seam_energies = vec![
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+        ];
+
+        #[rustfmt::skip]
         let expected_seam = vec![
             false, false, false, false, false,
             false, false, false, false, false,
@@ -580,6 +569,10 @@ mod tests {
         }
         mark_energy_map(context, &mut image_pixel_matrix);
         mark_seam(context, &mut image_pixel_matrix);
+        let seam_energy_matrix: Vec<f32> =
+            image_pixel_matrix.iter().map(|p| p.seam_energy).collect();
+        assert_eq!(seam_energy_matrix, expected_seam_energies);
+
         let seam_matrix: Vec<bool> = image_pixel_matrix
             .iter()
             .map(|p| p.status == PixelStatus::Seam)

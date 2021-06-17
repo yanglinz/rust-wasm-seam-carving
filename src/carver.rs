@@ -483,4 +483,42 @@ mod tests {
             assert_eq!(index, *expected_index);
         }
     }
+
+    #[test]
+    fn test_get_neighbor_pixel_index_mirror() {
+        let context = ImageContext {
+            width: 10,
+            height: 10,
+        };
+        for i in 0..=99 {
+            let pos = get_pixel_position(context, i);
+
+            let original = get_neighbor_pixel_index(context, i, 0, 0);
+            assert_eq!(original, Some(i));
+
+            let left = get_neighbor_pixel_index(context, i, -1, 0);
+            if left.is_some() {
+                let original = get_neighbor_pixel_index(context, left.unwrap(), 1, 0);
+                assert_eq!(original, Some(i));
+            }
+
+            let right = get_neighbor_pixel_index(context, i, 1, 0);
+            if right.is_some() {
+                let original = get_neighbor_pixel_index(context, right.unwrap(), -1, 0);
+                assert_eq!(original, Some(i));
+            }
+
+            let top = get_neighbor_pixel_index(context, i, 0, 1);
+            if top.is_some() {
+                let original = get_neighbor_pixel_index(context, top.unwrap(), 0, -1);
+                assert_eq!(original, Some(i));
+            }
+
+            let bottom = get_neighbor_pixel_index(context, i, 0, -1);
+            if bottom.is_some() {
+                let original = get_neighbor_pixel_index(context, bottom.unwrap(), 0, 1);
+                assert_eq!(original, Some(i));
+            }
+        }
+    }
 }

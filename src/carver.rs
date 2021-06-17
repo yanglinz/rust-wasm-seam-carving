@@ -98,6 +98,22 @@ fn get_neighbor_pixel_index(
     ));
 }
 
+// Helper to get a given pixel's neighbor pixel
+fn get_neighbor_pixel(
+    context: ImageContext,
+    image_pixel_matrix: &mut Vec<ImagePixel>,
+    index: usize,
+    offset_x: i8,
+    offset_y: i8,
+) -> Option<ImagePixel> {
+    let index = get_neighbor_pixel_index(context, index, offset_x, offset_y);
+    let pixel = match index {
+        None => None,
+        _ => Some(image_pixel_matrix[index.unwrap()]),
+    };
+    return pixel;
+}
+
 // We can initialize the image "matrix" with some placeholder values.
 fn get_image_pixel_matrix(context: ImageContext, image_data: ImageData) -> Vec<ImagePixel> {
     let w_matrix = context.width as usize;

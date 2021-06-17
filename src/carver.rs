@@ -90,7 +90,7 @@ fn get_neighbor_pixel_index(
 // Helper to get a given pixel's neighbor pixel
 fn get_neighbor_pixel(
     context: ImageContext,
-    image_pixel_matrix: &mut Vec<ImagePixel>,
+    image_pixel_matrix: &Vec<ImagePixel>,
     index: usize,
     offset_x: i8,
     offset_y: i8,
@@ -178,21 +178,9 @@ fn mark_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixe
     // TODO: Consider splitting the read/write portion of the matrix
     // to avoid having to clone a fairly large vector in each iteration.
     let pixel_matrix_clone = image_pixel_matrix.clone();
-    let matrix_width = context.width as usize;
-
-    // TODO: We'll need to account for dead pixels
     for (i, pixel) in image_pixel_matrix.iter_mut().enumerate() {
-        let mut left: Option<ImagePixel> = None;
-        // let pos = get_pixel_position(context, i as usize);
-        // if w > 0 {
-        //     left = Some(pixel_matrix_clone[get_pixel_index(context, h, w - 1)]);
-        // }
-
-        let mut right: Option<ImagePixel> = None;
-        // if w < matrix_width - 1 {
-        //     right = Some(pixel_matrix_clone[get_pixel_index(context, h, w + 1)]);
-        // }
-
+        let left = get_neighbor_pixel(context, &pixel_matrix_clone, i, -1, 0);
+        let right = get_neighbor_pixel(context, &pixel_matrix_clone, i, 1, 0);
         pixel.energy = get_energy(pixel.clone(), left, right);
     }
 }

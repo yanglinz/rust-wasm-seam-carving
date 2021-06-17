@@ -285,11 +285,6 @@ fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
         );
         image_pixel_matrix[index].status = PixelStatus::Seam;
     }
-
-    // Debugging artifacts
-    // web_sys::console::log_1(&"Debug 0".into());
-    // web_sys::console::log_1(&x.to_string().into());
-    // web_sys::console::log_1(&y.to_string().into());
 }
 
 fn remove_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {

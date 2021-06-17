@@ -548,4 +548,47 @@ mod tests {
         let energy_matrix: Vec<f32> = image_pixel_matrix.iter().map(|p| p.energy).collect();
         assert_eq!(energy_matrix, expected_energy);
     }
+
+    #[test]
+    fn test_mark_seam() {
+        let context = ImageContext {
+            width: 5,
+            height: 3,
+        };
+
+        #[rustfmt::skip]
+        let rgb_matrix = vec![
+            (100, 100, 100), (0, 100, 0), (200, 200, 0), (0, 100, 0),  (100, 20, 0),
+            (100, 0, 0),     (0, 100, 0), (0, 100, 200), (150, 50, 0), (100, 20, 0),
+            (100, 0, 0),     (0, 100, 0), (0, 100, 200), (200, 20, 0), (100, 20, 0),
+        ];
+
+        #[rustfmt::skip]
+        let expected_seam = vec![
+            false, false, false, false, false,
+            false, false, false, false, false,
+            false, false, false, false, false,
+        ];
+
+        let mut image_pixel_matrix = vec![];
+        for (r, g, b) in rgb_matrix {
+            image_pixel_matrix.push(ImagePixel {
+                r: r as u8,
+                g: g as u8,
+                b: b as u8,
+                a: 255,
+                status: PixelStatus::Live,
+                position: PixelPosition { x: 0, y: 0 },
+                energy: -1.0,
+                seam_energy: -1.0,
+            })
+        }
+        mark_energy_map(context, &mut image_pixel_matrix);
+        mark_seam(context, &mut image_pixel_matrix);
+        let seam_matrix: Vec<bool> = image_pixel_matrix
+            .iter()
+            .map(|p| p.status == PixelStatus::Seam)
+            .collect();
+        assert_eq!(seam_matrix, expected_seam);
+    }
 }

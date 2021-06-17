@@ -15,21 +15,10 @@ struct PixelPosition {
     y: u32,
 }
 
-// We need to:
-// 1. Make it easier to get neighbors
-// 2. Make it easier to track position of pixels
-
-// TODO:
-// 2. Add position tracking to ImagePixel
-// 3. Modify functions to take and return PixelPosition
-// 4. Add more tests with vec!
-// 5. Change all h/w to x/y where it makes sense
-
 #[derive(Copy, Clone, PartialEq)]
-enum PixelState {
+enum PixelStatus {
     Live,
     Seam,
-    Dead,
 }
 
 #[derive(Copy, Clone)]
@@ -41,10 +30,10 @@ struct ImagePixel {
     a: u8,
 
     // Stateful metadata
-    // position: Foo
+    status: PixelStatus,
+    position: PixelPosition,
     energy: f32,
     seam_energy: f32,
-    status: PixelState,
 }
 
 // Similar to the ImageData.data from the web canvas API, we'll represent the
@@ -123,9 +112,10 @@ fn get_image_pixel_matrix(context: ImageContext, image_data: ImageData) -> Vec<I
         g: 0,
         b: 0,
         a: 0,
+        status: PixelStatus::Live,
+        position: PixelPosition { x: 0, y: 0 },
         energy: -1.0,
         seam_energy: -1.0,
-        status: PixelState::Live,
     };
     let mut matrix = vec![placeholder; w_matrix * h_matrix];
 
@@ -144,9 +134,10 @@ fn get_image_pixel_matrix(context: ImageContext, image_data: ImageData) -> Vec<I
                 g: g,
                 b: b,
                 a: a,
+                status: PixelStatus::Live,
+                position: PixelPosition { x: 0, y: 0 },
                 energy: -1.0,
                 seam_energy: -1.0,
-                status: PixelState::Live,
             };
             let pos = PixelPosition {
                 x: w as u32,
@@ -309,7 +300,7 @@ fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
                 y: y as u32,
             },
         );
-        image_pixel_matrix[index].status = PixelState::Seam;
+        image_pixel_matrix[index].status = PixelStatus::Seam;
     }
 
     // Debugging artifacts
@@ -503,9 +494,10 @@ mod tests {
             g: g,
             b: b,
             a: 255,
+            status: PixelStatus::Live,
+            position: PixelPosition { x: 0, y: 0 },
             energy: -1.0,
             seam_energy: -1.0,
-            status: PixelState::Live,
         };
     }
 

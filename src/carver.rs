@@ -26,18 +26,6 @@ struct PixelPosition {
 // 5. Change all h/w to x/y where it makes sense
 
 #[derive(Copy, Clone, PartialEq)]
-enum RelativeDirection {
-    TopLeft,
-    Top,
-    TopRight,
-    Left,
-    Right,
-    BottomLeft,
-    Bottom,
-    BottomRight,
-}
-
-#[derive(Copy, Clone, PartialEq)]
 enum PixelState {
     Live,
     Seam,

@@ -373,44 +373,6 @@ pub fn get_resized_image_data(
 mod tests {
     use super::*;
 
-    fn get_pixel(r: u8, g: u8, b: u8) -> ImagePixel {
-        return ImagePixel {
-            r: r,
-            g: g,
-            b: b,
-            a: 255,
-            energy: -1.0,
-            seam_energy: -1.0,
-            status: PixelState::Live,
-        };
-    }
-
-    #[test]
-    fn test_get_pixel_energy_same_pixel() {
-        let energy = get_energy(
-            get_pixel(0, 0, 0),
-            Some(get_pixel(0, 0, 0)),
-            Some(get_pixel(0, 0, 0)),
-        );
-        assert_eq!(energy, 0.0);
-    }
-
-    #[test]
-    fn test_get_pixel_energy_nones() {
-        let energy = get_energy(get_pixel(0, 0, 0), None, None);
-        assert_eq!(energy, 0.0);
-    }
-
-    #[test]
-    fn test_get_pixel_energy_real() {
-        let energy = get_energy(
-            get_pixel(0, 0, 255),
-            Some(get_pixel(0, 128, 0)),
-            Some(get_pixel(255, 0, 0)),
-        );
-        assert_eq!(energy, 459.8467);
-    }
-
     #[test]
     fn test_get_pixel_index() {
         let context = ImageContext {
@@ -507,8 +469,6 @@ mod tests {
             height: 10,
         };
         for i in 0..=99 {
-            let pos = get_pixel_position(context, i);
-
             let original = get_neighbor_pixel_index(context, i, 0, 0);
             assert_eq!(original, Some(i));
 
@@ -536,5 +496,43 @@ mod tests {
                 assert_eq!(original, Some(i));
             }
         }
+    }
+
+    fn get_pixel(r: u8, g: u8, b: u8) -> ImagePixel {
+        return ImagePixel {
+            r: r,
+            g: g,
+            b: b,
+            a: 255,
+            energy: -1.0,
+            seam_energy: -1.0,
+            status: PixelState::Live,
+        };
+    }
+
+    #[test]
+    fn test_get_pixel_energy_same_pixel() {
+        let energy = get_energy(
+            get_pixel(0, 0, 0),
+            Some(get_pixel(0, 0, 0)),
+            Some(get_pixel(0, 0, 0)),
+        );
+        assert_eq!(energy, 0.0);
+    }
+
+    #[test]
+    fn test_get_pixel_energy_nones() {
+        let energy = get_energy(get_pixel(0, 0, 0), None, None);
+        assert_eq!(energy, 0.0);
+    }
+
+    #[test]
+    fn test_get_pixel_energy_real() {
+        let energy = get_energy(
+            get_pixel(0, 0, 255),
+            Some(get_pixel(0, 128, 0)),
+            Some(get_pixel(255, 0, 0)),
+        );
+        assert_eq!(energy, 459.8467);
     }
 }

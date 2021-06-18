@@ -30,7 +30,11 @@ pub fn resize(
         width_target,
         height_target,
     );
-    let data =
-        ImageData::new_with_u8_clamped_array_and_sh(Clamped(&mut image_data), width, height)?;
+    let data = ImageData::new_with_u8_clamped_array_and_sh(
+        Clamped(&mut image_data),
+        width_target,
+        height_target,
+    )?;
+
     ctx.put_image_data(&data, 0.0, 0.0)
 }

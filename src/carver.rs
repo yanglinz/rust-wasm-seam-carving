@@ -118,16 +118,12 @@ fn get_image_pixel_matrix(context: ImageContext, image_data: ImageData) -> Vec<I
         seam_energy: -1.0,
     };
     let mut matrix = vec![placeholder; w_matrix * h_matrix];
-
     let data = image_data.data();
     for h in 0..h_matrix {
         for w in 0..w_matrix {
             let start = (h * w_matrix + w) * 4;
             let start_index = start as usize;
-            let pos = PixelPosition {
-                x: context.width,
-                y: context.height,
-            };
+            let pos = PixelPosition { x: 0, y: 0 };
             let pixel = ImagePixel {
                 r: data[start_index + 0],
                 g: data[start_index + 1],

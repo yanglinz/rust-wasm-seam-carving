@@ -76,8 +76,8 @@ fn get_neighbor_pixel_index(
         return None;
     }
 
-    let new_x = pos.x as i8 + offset_x;
-    let new_y = pos.y as i8 + offset_y;
+    let new_x = pos.x as i32 + offset_x as i32;
+    let new_y = pos.y as i32 + offset_y as i32;
     return Some(get_pixel_index(
         context,
         PixelPosition {

@@ -304,9 +304,13 @@ pub fn get_resized_image_data(
         remove_seam(context, &mut matrix);
     }
 
+    let context = ImageContext {
+        width: width_target,
+        height: height_target,
+    };
     let mut data = Vec::new();
-    for h in 0..height_current {
-        for w in 0..width_current {
+    for h in 0..height_target {
+        for w in 0..width_target {
             let index = get_pixel_index(
                 context,
                 PixelPosition {

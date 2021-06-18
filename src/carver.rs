@@ -145,6 +145,13 @@ fn get_image_pixel_matrix(context: ImageContext, image_data: ImageData) -> Vec<I
     return matrix;
 }
 
+fn mark_pixel_position(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
+    for (i, pixel) in image_pixel_matrix.iter_mut().enumerate() {
+        let pos = get_pixel_position(context, i);
+        pixel.position = pos;
+    }
+}
+
 // Helper function to calculate the image pixel "energy" from its neighbors.
 fn get_energy(
     pixel: ImagePixel,
@@ -217,59 +224,62 @@ fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
         }
     }
 
-    // let mut x = 0;
-    // let mut y = 0;
-    // for h in (0..h_matrix).rev() {
-    //     let is_last = h == h_matrix - 1;
-    //     let is_first = h == 0;
-    //     if is_first || is_last {
-    //         let start = (h_matrix - 1) * w_matrix;
-    //         let end = h_matrix * w_matrix;
-    //         let last_row = &image_pixel_matrix[start..end];
-    //         let mut min_energy = 9999.0;
-    //         for (i, p) in last_row.iter().enumerate() {
-    //             if p.seam_energy < min_energy {
-    //                 min_energy = p.seam_energy;
-    //                 x = i;
-    //                 y = h;
-    //             }
-    //         }
-    //     } else {
-    //         let current_index = get_pixel_index(
-    //             context,
-    //             PixelPosition {
-    //                 x: x as u32,
-    //                 y: y as u32,
-    //             },
-    //         );
-    //         let top_left = get_neighbor_pixel_index(context, current_index, -1, 1);
-    //         let top = get_neighbor_pixel_index(context, current_index, 0, 1);
-    //         let top_right = get_neighbor_pixel_index(context, current_index, 1, 1);
+    let mut x = 0;
+    let mut y = 0;
+    for h in (0..h_matrix).rev() {
+        let is_last = h == h_matrix - 1;
+        let is_first = h == 0;
+        if is_first || is_last {
+            let start = h * w_matrix;
+            let end = start + w_matrix;
+            let last_row = &image_pixel_matrix[start..end];
+            let mut min = f32::INFINITY;
+            for (i, p) in last_row.iter().enumerate() {
+                if p.seam_energy < min {
+                    min = p.seam_energy;
+                    x = i;
+                    y = h;
+                }
+            }
+        } else {
+            let index = get_pixel_index(
+                context,
+                PixelPosition {
+                    x: x as u32,
+                    y: y as u32,
+                },
+            );
+            let top_left = get_neighbor_pixel(context, image_pixel_matrix, index, -1, -1);
+            let top = get_neighbor_pixel(context, image_pixel_matrix, index, 0, -1);
+            let top_right = get_neighbor_pixel(context, image_pixel_matrix, index, 1, -1);
+            let neighbors: Vec<ImagePixel> = vec![top_left, top, top_right]
+                .iter()
+                .filter(|p| p.is_some())
+                .map(|p| p.unwrap())
+                .collect();
+            let mut min = f32::INFINITY;
+            for p in neighbors {
+                if p.seam_energy < min {
+                    min = p.seam_energy;
+                    x = p.position.x as usize;
+                    y = p.position.y as usize;
+                }
+            }
+        }
 
-    //         if top_left.is_none() && top.is_none() && top_right.is_none() {
-    //             // Do nothing
-    //         } else {
-    //             // let pixels = vec![top_left, top, top_right];
-    //             // let min = pixels.into_iter().filter(|x| x.is_some()).min();
-
-    //             // TODO: Attach index to pixels; it'll make the traversal a lot easier
-    //         }
-    //     }
-
-    // Mark the pixel
-    // let index = get_pixel_index(
-    //     context,
-    //     PixelPosition {
-    //         x: x as u32,
-    //         y: y as u32,
-    //     },
-    // );
-    // image_pixel_matrix[index].status = PixelStatus::Seam;
-    // }
+        let index = get_pixel_index(
+            context,
+            PixelPosition {
+                x: x as u32,
+                y: y as u32,
+            },
+        );
+        image_pixel_matrix[index].status = PixelStatus::Seam;
+    }
 }
 
 fn remove_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
-    // TODO: Implement seam removal
+    image_pixel_matrix.retain(|p| p.status != PixelStatus::Seam);
 }
 
 pub fn get_resized_image_data(
@@ -292,6 +302,7 @@ pub fn get_resized_image_data(
             height: height_current,
         };
 
+        mark_pixel_position(context, &mut matrix);
         mark_energy_map(context, &mut matrix);
         mark_seam(context, &mut matrix);
         remove_seam(context, &mut matrix);
@@ -310,7 +321,7 @@ pub fn get_resized_image_data(
             let pixel = matrix[index];
             data.push(pixel.r);
             data.push(pixel.g);
-            data.push(50);
+            data.push(pixel.b);
             data.push(pixel.a);
         }
     }
@@ -548,9 +559,9 @@ mod tests {
 
         #[rustfmt::skip]
         let expected_seam = vec![
-            false, false, false, false, false,
-            false, false, false, false, false,
-            false, false, false, false, false,
+            false, false, false, false, true,
+            false, false, false, true, false,
+            false, false, true, false, false,
         ];
 
         let mut image_pixel_matrix = vec![];
@@ -566,6 +577,7 @@ mod tests {
                 seam_energy: -1.0,
             })
         }
+        mark_pixel_position(context, &mut image_pixel_matrix);
         mark_energy_map(context, &mut image_pixel_matrix);
         mark_seam(context, &mut image_pixel_matrix);
         let seam_energy_matrix: Vec<f32> =

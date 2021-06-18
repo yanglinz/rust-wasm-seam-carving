@@ -36,7 +36,7 @@ function carverRedize(canvas) {
   }
 
   const ctx = canvas.getContext("2d");
-  wasmResize(ctx, canvas.width, canvas.height, canvas.width - 40, canvas.height);
+  wasmResize(ctx, canvas.width, canvas.height, canvas.width - 5, canvas.height);
 }
 
 function Resizer() {

@@ -10,6 +10,7 @@ mod carver;
 #[wasm_bindgen]
 pub fn resize(
     ctx: &CanvasRenderingContext2d,
+    ctx2: &CanvasRenderingContext2d,
     width_current: u32,
     height_current: u32,
     width_target: u32,
@@ -36,5 +37,5 @@ pub fn resize(
         height_target,
     )?;
 
-    ctx.put_image_data(&data, 0.0, 0.0)
+    ctx2.put_image_data(&data, 0.0, 0.0)
 }

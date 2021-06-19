@@ -1,3 +1,4 @@
+use wasm_bindgen::Clamped;
 use web_sys::ImageData;
 
 extern crate web_sys;
@@ -104,7 +105,7 @@ fn get_neighbor_pixel(
 }
 
 // We can initialize the image "matrix" with some placeholder values.
-fn get_image_pixel_matrix(context: ImageContext, image_data: ImageData) -> Vec<ImagePixel> {
+fn get_image_pixel_matrix(context: ImageContext, image_data: Clamped<Vec<u8>>) -> Vec<ImagePixel> {
     let w_matrix = context.width as usize;
     let h_matrix = context.height as usize;
     let placeholder = ImagePixel {
@@ -118,17 +119,16 @@ fn get_image_pixel_matrix(context: ImageContext, image_data: ImageData) -> Vec<I
         seam_energy: -1.0,
     };
     let mut matrix = vec![placeholder; w_matrix * h_matrix];
-    let data = image_data.data();
     for h in 0..h_matrix {
         for w in 0..w_matrix {
             let start = (h * w_matrix + w) * 4;
             let start_index = start as usize;
             let pos = PixelPosition { x: 0, y: 0 };
             let pixel = ImagePixel {
-                r: data[start_index + 0],
-                g: data[start_index + 1],
-                b: data[start_index + 2],
-                a: data[start_index + 3],
+                r: image_data[start_index + 0],
+                g: image_data[start_index + 1],
+                b: image_data[start_index + 2],
+                a: image_data[start_index + 3],
                 status: PixelStatus::Live,
                 position: pos,
                 energy: -1.0,
@@ -290,13 +290,19 @@ pub fn get_resized_image_data(
         height: height_current,
     };
 
-    let mut matrix = get_image_pixel_matrix(context, image_data);
+    let mut matrix = get_image_pixel_matrix(context, image_data.data());
     let steps = width_current - width_target;
     for s in 0..steps {
         let context = ImageContext {
             width: width_current - s,
             height: height_current,
         };
+
+        // for (i, pixel) in matrix.iter().enumerate() {
+        //     if i < 20 {
+        //         web_sys::console::log_1(&format!("r, g, b, a: {} {} {} {}", pixel.r, pixel.g, pixel.b, pixel.a).into());
+        //     }
+        // }
 
         mark_pixel_position(context, &mut matrix);
         mark_energy_map(context, &mut matrix);
@@ -495,6 +501,48 @@ mod tests {
             Some(get_pixel(255, 0, 0)),
         );
         assert_eq!(energy, 459.8467);
+    }
+
+    #[test]
+    fn test_get_image_pixel_matrix() {
+        let context = ImageContext {
+            width: 3,
+            height: 3,
+        };
+
+        #[rustfmt::skip]
+        let image_data = Clamped(vec![
+            100, 100, 100, 255,  100, 100, 100, 255,  100, 100, 100, 255,
+            100, 100, 100, 255,  100, 100, 100, 255,  100, 100, 100, 255,
+            100, 100, 100, 255,  100, 100, 100, 255,  100, 100, 100, 255,
+        ]);
+
+        #[rustfmt::skip]
+        let rgb_matrix: Vec<(u8, u8, u8, u8)> = vec![
+            (100, 100, 100, 255), (0, 100, 0, 255), (200, 200, 0, 255),
+            (100, 100, 100, 255), (0, 100, 0, 255), (200, 200, 0, 255),
+            (100, 100, 100, 255), (0, 100, 0, 255), (200, 200, 0, 255),
+        ];
+        let mut expected_matrix = vec![];
+        for (r, g, b, a) in &rgb_matrix {
+            expected_matrix.push(ImagePixel {
+                r: *r as u8,
+                g: *g as u8,
+                b: *b as u8,
+                a: *a as u8,
+                status: PixelStatus::Live,
+                position: PixelPosition { x: 0, y: 0 },
+                energy: -1.0,
+                seam_energy: -1.0,
+            })
+        }
+
+        let matrix = get_image_pixel_matrix(context, image_data);
+        let mut temp_testing_tool = vec![];
+        for p in matrix {
+            temp_testing_tool.push((p.r, p.g, p.b, p.a));
+        }
+        assert_eq!(temp_testing_tool, rgb_matrix);
     }
 
     #[test]

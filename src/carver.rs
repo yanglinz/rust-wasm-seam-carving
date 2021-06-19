@@ -119,11 +119,15 @@ fn get_image_pixel_matrix(context: ImageContext, image_data: Clamped<Vec<u8>>) -
         seam_energy: -1.0,
     };
     let mut matrix = vec![placeholder; w_matrix * h_matrix];
+
     for h in 0..h_matrix {
         for w in 0..w_matrix {
             let start = (h * w_matrix + w) * 4;
             let start_index = start as usize;
-            let pos = PixelPosition { x: 0, y: 0 };
+            let pos = PixelPosition {
+                x: w as u32,
+                y: h as u32,
+            };
             let pixel = ImagePixel {
                 r: image_data[start_index + 0],
                 g: image_data[start_index + 1],
@@ -134,7 +138,8 @@ fn get_image_pixel_matrix(context: ImageContext, image_data: Clamped<Vec<u8>>) -
                 energy: -1.0,
                 seam_energy: -1.0,
             };
-            matrix[get_pixel_index(context, pos)] = pixel;
+            let index = get_pixel_index(context, pos);
+            matrix[index] = pixel;
         }
     }
 
@@ -512,9 +517,9 @@ mod tests {
 
         #[rustfmt::skip]
         let image_data = Clamped(vec![
-            100, 100, 100, 255,  100, 100, 100, 255,  100, 100, 100, 255,
-            100, 100, 100, 255,  100, 100, 100, 255,  100, 100, 100, 255,
-            100, 100, 100, 255,  100, 100, 100, 255,  100, 100, 100, 255,
+            100, 100, 100, 255,  0, 100, 0, 255,  200, 200, 0, 255,
+            100, 100, 100, 255,  0, 100, 0, 255,  200, 200, 0, 255,
+            100, 100, 100, 255,  0, 100, 0, 255,  200, 200, 0, 255,
         ]);
 
         #[rustfmt::skip]

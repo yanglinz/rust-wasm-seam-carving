@@ -40,8 +40,7 @@ function carverRedize(canvas) {
   const ctx2 = canvasTarget.getContext("2d");
 
   window.test = ctx2;
-
-  wasmResize(ctx, ctx2, canvas.width, canvas.height, canvas.width - 5, canvas.height);
+  wasmResize(ctx, ctx2, canvas.width, canvas.height, canvas.width - 50, canvas.height);
 
   // TODO:
   // const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -69,7 +68,7 @@ function Resizer() {
       <div>
         <canvas
           id="test-canvas"
-          style={{ width: 500, height: 500, background: "#ddd" }}
+          style={{ width: 300, height: 150, background: "#ddd" }}
         ></canvas>
       </div>
     </div>

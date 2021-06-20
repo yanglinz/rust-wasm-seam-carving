@@ -21,7 +21,7 @@ function loadImage(canvas) {
     );
 
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    console.log("pre", imageData);
+    console.log(imageData);
   };
   img.onerror = function (e) {
     console.log("error", e);
@@ -35,16 +35,18 @@ function carverRedize(canvas) {
       .catch(console.error);
   }
 
-  const canvasTarget = document.getElementById("test-canvas");
   const ctx = canvas.getContext("2d");
-  const ctx2 = canvasTarget.getContext("2d");
+  const canvasTarget = document.getElementById("test-canvas");
+  const ctxTarget = canvasTarget.getContext("2d");
 
-  window.test = ctx2;
-  wasmResize(ctx, ctx2, canvas.width, canvas.height, canvas.width - 50, canvas.height);
-
-  // TODO:
-  // const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  // console.log("post", imageData);
+  wasmResize(
+    ctx,
+    ctxTarget,
+    canvas.width,
+    canvas.height,
+    canvas.width - 50,
+    canvas.height
+  );
 }
 
 function Resizer() {

@@ -2,9 +2,6 @@ use wasm_bindgen::prelude::*;
 use wasm_bindgen::Clamped;
 use web_sys::{CanvasRenderingContext2d, ImageData};
 
-use std::panic;
-extern crate console_error_panic_hook;
-
 mod carver;
 
 #[wasm_bindgen]
@@ -16,8 +13,6 @@ pub fn resize(
     width_target: u32,
     height_target: u32,
 ) -> Result<(), JsValue> {
-    panic::set_hook(Box::new(console_error_panic_hook::hook));
-
     let width = width_current;
     let height = height_current;
     let width_select = width_current as f64;

@@ -36,7 +36,17 @@ function carverRedize(canvas) {
   }
 
   const ctx = canvas.getContext("2d");
-  wasmResize(ctx, canvas.width, canvas.height, canvas.width - 40, canvas.height);
+  const canvasTarget = document.getElementById("test-canvas");
+  const ctxTarget = canvasTarget.getContext("2d");
+
+  wasmResize(
+    ctx,
+    ctxTarget,
+    canvas.width,
+    canvas.height,
+    canvas.width - 50,
+    canvas.height
+  );
 }
 
 function Resizer() {
@@ -56,6 +66,12 @@ function Resizer() {
       <hr />
       <div>
         <canvas id="app-canvas"></canvas>
+      </div>
+      <div>
+        <canvas
+          id="test-canvas"
+          style={{ width: 300, height: 150, background: "#ddd" }}
+        ></canvas>
       </div>
     </div>
   );

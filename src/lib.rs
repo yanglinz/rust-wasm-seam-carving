@@ -7,6 +7,7 @@ mod carver;
 #[wasm_bindgen]
 pub fn resize(
     ctx: &CanvasRenderingContext2d,
+    ctx2: &CanvasRenderingContext2d,
     width_current: u32,
     height_current: u32,
     width_target: u32,
@@ -25,7 +26,11 @@ pub fn resize(
         width_target,
         height_target,
     );
-    let data =
-        ImageData::new_with_u8_clamped_array_and_sh(Clamped(&mut image_data), width, height)?;
-    ctx.put_image_data(&data, 0.0, 0.0)
+    let data = ImageData::new_with_u8_clamped_array_and_sh(
+        Clamped(&mut image_data),
+        width_target,
+        height_target,
+    )?;
+
+    ctx2.put_image_data(&data, 0.0, 0.0)
 }

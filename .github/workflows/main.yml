@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: yarn install
-      - run: yarn build
+      - run: PUBLIC_URL="/content-aware-image-resizer/" yarn build
       - uses: JamesIves/github-pages-deploy-action@4.1.4
         with:
           branch: gh-pages

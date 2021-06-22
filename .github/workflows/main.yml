@@ -3,7 +3,7 @@ name: Main Workflow
 on: [push]
 
 jobs:
-  build-and-deploy:
+  main:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

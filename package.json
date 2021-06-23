@@ -19,7 +19,6 @@
     "dev:js": "FAST_REFRESH=true react-app-rewired start",
     "dev": "run-p dev:*",
     "build": "react-app-rewired build",
-    "test:fixtures": "node tests/images/fixtures.js",
     "test": "react-app-rewired test"
   },
   "dependencies": {
@@ -33,7 +32,6 @@
     "@wasm-tool/wasm-pack-plugin": "^1.4.0",
     "npm-run-all": "^4.1.5",
     "react-app-rewired": "^2.1.8",
-    "react-scripts": "^4.0.3",
-    "sharp": "^0.28.2"
+    "react-scripts": "^4.0.3"
   }
 }

@@ -105,7 +105,7 @@ fn get_neighbor_pixel(
 }
 
 // We can initialize the image "matrix" with some placeholder values.
-fn get_image_pixel_matrix(context: ImageContext, image_data: Clamped<Vec<u8>>) -> Vec<ImagePixel> {
+fn get_image_pixel_matrix(context: ImageContext, image_data: Vec<u8>) -> Vec<ImagePixel> {
     let w_matrix = context.width as usize;
     let h_matrix = context.height as usize;
     let placeholder = ImagePixel {
@@ -193,7 +193,7 @@ fn mark_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixe
     }
 }
 
-fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
+fn mark_seam_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
     let w_matrix = context.width as usize;
     let h_matrix = context.height as usize;
 
@@ -220,10 +220,15 @@ fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
                     .filter(|p| p.is_some())
                     .map(|p| p.unwrap().seam_energy)
                     .fold(f32::INFINITY, |a, b| a.min(b));
-                image_pixel_matrix[index].seam_energy = image_pixel_matrix[index].seam_energy + min;
+                image_pixel_matrix[index].seam_energy = image_pixel_matrix[index].energy + min;
             }
         }
     }
+}
+
+fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
+    let w_matrix = context.width as usize;
+    let h_matrix = context.height as usize;
 
     let mut x = 0;
     let mut y = 0;
@@ -279,12 +284,12 @@ fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
     }
 }
 
-fn remove_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
+fn remove_seam(_context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
     image_pixel_matrix.retain(|p| p.status != PixelStatus::Seam);
 }
 
 pub fn get_resized_image_data(
-    image_data: ImageData,
+    image_data: Vec<u8>,
     width_current: u32,
     height_current: u32,
     width_target: u32,
@@ -295,7 +300,7 @@ pub fn get_resized_image_data(
         height: height_current,
     };
 
-    let mut matrix = get_image_pixel_matrix(context, image_data.data());
+    let mut matrix = get_image_pixel_matrix(context, image_data);
     let steps = width_current - width_target;
     for s in 0..steps {
         let context = ImageContext {
@@ -303,14 +308,11 @@ pub fn get_resized_image_data(
             height: height_current,
         };
 
-        // for (i, pixel) in matrix.iter().enumerate() {
-        //     if i < 20 {
-        //         web_sys::console::log_1(&format!("r, g, b, a: {} {} {} {}", pixel.r, pixel.g, pixel.b, pixel.a).into());
-        //     }
-        // }
+        // web_sys::console::log_1(&format!("r, g, b, a: {} {} {} {}", pixel.r, pixel.g, pixel.b, pixel.a).into());
 
         mark_pixel_position(context, &mut matrix);
         mark_energy_map(context, &mut matrix);
+        mark_seam_energy_map(context, &mut matrix);
         mark_seam(context, &mut matrix);
         remove_seam(context, &mut matrix);
     }
@@ -343,6 +345,61 @@ pub fn get_resized_image_data(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn from_grayscale(gray_matrix: Vec<u8>) -> Vec<ImagePixel> {
+        let mut matrix = vec![];
+        for g in &gray_matrix {
+            matrix.push(ImagePixel {
+                r: *g,
+                g: *g,
+                b: *g,
+                a: 255,
+                status: PixelStatus::Live,
+                position: PixelPosition { x: 0, y: 0 },
+                energy: -1.0,
+                seam_energy: -1.0,
+            })
+        }
+        return matrix;
+    }
+
+    fn from_rgb(rgba_matrix: Vec<(u8, u8, u8)>) -> Vec<ImagePixel> {
+        let mut matrix = vec![];
+        for (r, g, b) in &rgba_matrix {
+            matrix.push(ImagePixel {
+                r: *r as u8,
+                g: *g as u8,
+                b: *b as u8,
+                a: 255,
+                status: PixelStatus::Live,
+                position: PixelPosition { x: 0, y: 0 },
+                energy: -1.0,
+                seam_energy: -1.0,
+            })
+        }
+        return matrix;
+    }
+
+    fn from_rgba(rgba_matrix: Vec<(u8, u8, u8, u8)>) -> Vec<ImagePixel> {
+        let mut matrix = vec![];
+        for (r, g, b, a) in &rgba_matrix {
+            matrix.push(ImagePixel {
+                r: *r as u8,
+                g: *g as u8,
+                b: *b as u8,
+                a: *a as u8,
+                status: PixelStatus::Live,
+                position: PixelPosition { x: 0, y: 0 },
+                energy: -1.0,
+                seam_energy: -1.0,
+            })
+        }
+        return matrix;
+    }
+
+    fn normalize(image_data: Vec<ImagePixel>) -> Vec<(u8, u8, u8, u8)> {
+        return image_data.iter().map(|p| (p.r, p.g, p.b, p.a)).collect();
+    }
 
     #[test]
     fn test_get_pixel_index() {
@@ -516,38 +573,20 @@ mod tests {
         };
 
         #[rustfmt::skip]
-        let image_data = Clamped(vec![
+        let image_data = vec![
             100, 100, 100, 255,  0, 100, 0, 255,  200, 200, 0, 255,
             100, 100, 100, 255,  0, 100, 0, 255,  200, 200, 0, 255,
             100, 100, 100, 255,  0, 100, 0, 255,  200, 200, 0, 255,
-        ]);
+        ];
 
         #[rustfmt::skip]
-        let rgb_matrix: Vec<(u8, u8, u8, u8)> = vec![
+        let expected = from_rgba(vec![
             (100, 100, 100, 255), (0, 100, 0, 255), (200, 200, 0, 255),
             (100, 100, 100, 255), (0, 100, 0, 255), (200, 200, 0, 255),
             (100, 100, 100, 255), (0, 100, 0, 255), (200, 200, 0, 255),
-        ];
-        let mut expected_matrix = vec![];
-        for (r, g, b, a) in &rgb_matrix {
-            expected_matrix.push(ImagePixel {
-                r: *r as u8,
-                g: *g as u8,
-                b: *b as u8,
-                a: *a as u8,
-                status: PixelStatus::Live,
-                position: PixelPosition { x: 0, y: 0 },
-                energy: -1.0,
-                seam_energy: -1.0,
-            })
-        }
-
-        let matrix = get_image_pixel_matrix(context, image_data);
-        let mut temp_testing_tool = vec![];
-        for p in matrix {
-            temp_testing_tool.push((p.r, p.g, p.b, p.a));
-        }
-        assert_eq!(temp_testing_tool, rgb_matrix);
+        ]);
+        let actual = get_image_pixel_matrix(context, image_data);
+        assert_eq!(normalize(actual), normalize(expected));
     }
 
     #[test]
@@ -558,11 +597,11 @@ mod tests {
         };
 
         #[rustfmt::skip]
-        let rgb_matrix = vec![
+        let mut image_pixel_matrix = from_rgb(vec![
             (100, 100, 100), (0, 100, 0), (200, 200, 0),
             (100, 0, 0),     (0, 100, 0), (0, 100, 200),
             (100, 0, 0),     (0, 100, 0), (0, 100, 200),
-        ];
+        ]);
 
         #[rustfmt::skip]
         let expected_energy = vec![
@@ -570,20 +609,6 @@ mod tests {
             141.42136, 244.94897, 200.0, 
             141.42136, 244.94897, 200.0
         ];
-
-        let mut image_pixel_matrix = vec![];
-        for (r, g, b) in rgb_matrix {
-            image_pixel_matrix.push(ImagePixel {
-                r: r as u8,
-                g: g as u8,
-                b: b as u8,
-                a: 255,
-                status: PixelStatus::Live,
-                position: PixelPosition { x: 0, y: 0 },
-                energy: -1.0,
-                seam_energy: -1.0,
-            })
-        }
         mark_energy_map(context, &mut image_pixel_matrix);
         let energy_matrix: Vec<f32> = image_pixel_matrix.iter().map(|p| p.energy).collect();
         assert_eq!(energy_matrix, expected_energy);
@@ -597,46 +622,92 @@ mod tests {
         };
 
         #[rustfmt::skip]
-        let rgb_matrix = vec![
+        let mut image_pixel_matrix = from_rgb(vec![
             (100, 100, 100), (0, 100, 0), (200, 200, 0),  (0, 100, 0),  (90, 20, 0),
             (10, 0, 0),      (0, 100, 0), (0, 100, 130),  (150, 50, 0), (120, 20, 0),
             (111, 1, 4),     (0, 100, 0), (11, 50, 170),  (190, 20, 0), (110, 20, 0),
+        ]);
+
+        let expected_energy_map = vec![
+            141.42136, 264.57513, 316.22775, 253.9685, 120.41595, 
+            100.49876, 164.31677, 242.4871, 209.04546, 42.426407, 
+            148.78844, 231.64412, 305.55197, 261.2298, 80.0
         ];
 
         #[rustfmt::skip]
         let expected_seam_energies = vec![
             141.42136, 264.57513, 316.22775, 253.9685, 120.41595, 
-            140.42136, 140.42136, 252.9685, 119.41595, 119.41595, 
-            139.42136, 139.42136, 118.41595, 118.41595, 118.41595
+            241.9201, 305.73813, 496.45563, 329.4614, 162.84235, 
+            390.70856, 473.5642, 611.2901, 424.07214, 242.84235
         ];
 
-        #[rustfmt::skip]
-        let expected_seam = vec![
-            false, false, false, false, true,
-            false, false, false, true, false,
-            false, false, true, false, false,
-        ];
-
-        let mut image_pixel_matrix = vec![];
-        for (r, g, b) in rgb_matrix {
-            image_pixel_matrix.push(ImagePixel {
-                r: r as u8,
-                g: g as u8,
-                b: b as u8,
-                a: 255,
-                status: PixelStatus::Live,
-                position: PixelPosition { x: 0, y: 0 },
-                energy: -1.0,
-                seam_energy: -1.0,
-            })
-        }
         mark_pixel_position(context, &mut image_pixel_matrix);
         mark_energy_map(context, &mut image_pixel_matrix);
+        let energy_matrix: Vec<f32> =
+            image_pixel_matrix.iter().map(|p| p.energy).collect();
+        assert_eq!(energy_matrix, expected_energy_map);
+
+        mark_seam_energy_map(context, &mut image_pixel_matrix);
         mark_seam(context, &mut image_pixel_matrix);
         let seam_energy_matrix: Vec<f32> =
             image_pixel_matrix.iter().map(|p| p.seam_energy).collect();
         assert_eq!(seam_energy_matrix, expected_seam_energies);
 
+        #[rustfmt::skip]
+        let expected_seam = vec![
+            false, false, false, false, true,
+            false, false, false, false, true,
+            false, false, false, false, true,
+        ];
+        let seam_matrix: Vec<bool> = image_pixel_matrix
+            .iter()
+            .map(|p| p.status == PixelStatus::Seam)
+            .collect();
+        assert_eq!(seam_matrix, expected_seam);
+    }
+
+    #[test]
+    fn test_mark_seam_medium() {
+        let context = ImageContext {
+            width: 10,
+            height: 5,
+        };
+
+        #[rustfmt::skip]
+        let mut image_pixel_matrix = from_grayscale(vec![
+            10, 50, 10, 50, 10, 10, 50, 10, 50, 10,
+            10, 50, 10, 50, 10, 10, 50, 10, 50, 10,
+            10, 50, 10, 50, 10, 10, 50, 10, 50, 10,
+            10, 50, 10, 50, 10, 10, 50, 10, 50, 10,
+            10, 50, 10, 50, 10, 10, 50, 10, 50, 10,
+        ]);
+
+        #[rustfmt::skip]
+        let expected_seam_energies = vec![
+            69.282036, 97.97959, 97.97959, 97.97959, 69.282036, 69.282036, 97.97959, 97.97959, 97.97959, 69.282036, 
+            138.56407, 167.26163, 195.95918, 167.26163, 138.56407, 138.56407, 167.26163, 195.95918, 167.26163, 138.56407, 
+            207.8461, 236.54367, 265.2412, 236.54367, 207.8461, 207.8461, 236.54367, 265.2412, 236.54367, 207.8461, 
+            277.12814, 305.82568, 334.52325, 305.82568, 277.12814, 277.12814, 305.82568, 334.52325, 305.82568, 277.12814, 
+            346.4102, 375.10773, 403.80527, 375.10773, 346.4102, 346.4102, 375.10773, 403.80527, 375.10773, 346.4102
+        ];
+
+        mark_pixel_position(context, &mut image_pixel_matrix);
+        mark_energy_map(context, &mut image_pixel_matrix);
+        mark_seam_energy_map(context, &mut image_pixel_matrix);
+        let seam_energy_matrix: Vec<f32> =
+            image_pixel_matrix.iter().map(|p| p.seam_energy).collect();
+        assert_eq!(seam_energy_matrix, expected_seam_energies);
+
+        mark_seam(context, &mut image_pixel_matrix);
+
+        #[rustfmt::skip]
+        let expected_seam = vec![
+            true, false, false, false, false, false, false, false, false, false, 
+            true, false, false, false, false, false, false, false, false, false, 
+            true, false, false, false, false, false, false, false, false, false, 
+            true, false, false, false, false, false, false, false, false, false, 
+            true, false, false, false, false, false, false, false, false, false 
+        ];
         let seam_matrix: Vec<bool> = image_pixel_matrix
             .iter()
             .map(|p| p.status == PixelStatus::Seam)

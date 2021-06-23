@@ -51,10 +51,10 @@ function carverRedize(canvasElements) {
   wasmResize(
     ctxOrignal,
     ctxResized,
-    canvas.width,
-    canvas.height,
-    canvas.width - 50,
-    canvas.height
+    resized.width,
+    resized.height,
+    resized.width - 50,
+    resized.height
   );
 }
 
@@ -81,15 +81,16 @@ function Resizer() {
     carverRedize(getCanvasElements());
   }
 
+  const canvasStyle = { background: "rgba(0, 0, 0, 0.05)" };
   return (
     <div>
       <button onClick={handleResize}>Click me!</button>
       <hr />
       <div>
-        <canvas ref={canvasOriginal}></canvas>
+        <canvas ref={canvasOriginal} style={canvasStyle}></canvas>
       </div>
       <div>
-        <canvas ref={canvasResized}></canvas>
+        <canvas ref={canvasResized} style={canvasStyle}></canvas>
       </div>
     </div>
   );

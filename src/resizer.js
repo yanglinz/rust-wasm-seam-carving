@@ -1,4 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+
+const DEMO_IMAGE = "https://source.unsplash.com/YJjm6XD6zF4/1600x900";
 
 function loadImage(url) {
   const img = new Image();
@@ -15,32 +17,40 @@ function loadImage(url) {
   });
 }
 
-function loadCanvasImage(canvas) {
-  const ctx = canvas.getContext("2d");
+function loadCanvasImage(canvasElements) {
+  const { original, resized } = canvasElements;
 
-  loadImage("https://source.unsplash.com/YJjm6XD6zF4/1600x900").then((img) => {
+  loadImage(DEMO_IMAGE).then((img) => {
+    // TODO: Think of high DPI screens / scale down heuristics
+    original.width = img.width;
+    original.height = img.height;
+    resized.width = img.width;
+    resized.height = img.height;
+
+    const ctxOriginal = original.getContext("2d");
     // prettier-ignore
-    ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
-
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    ctxOriginal.drawImage(img, 0, 0, img.width, img.height, 0, 0, original.width, original.height);
+    // prettier-ignore
+    const imageData = ctxOriginal.getImageData(0, 0, original.width, original.height);
     console.log(imageData);
   });
 }
 
-function carverRedize(canvas) {
+function carverRedize(canvasElements) {
+  const { original, resized } = canvasElements;
+
   function wasmResize(...args) {
     import("./pkg")
       .then((module) => module.resize(...args))
       .catch(console.error);
   }
 
-  const ctx = canvas.getContext("2d");
-  const canvasTarget = document.getElementById("test-canvas");
-  const ctxTarget = canvasTarget.getContext("2d");
+  const ctxOrignal = original.getContext("2d");
+  const ctxResized = resized.getContext("2d");
 
   wasmResize(
-    ctx,
-    ctxTarget,
+    ctxOrignal,
+    ctxResized,
     canvas.width,
     canvas.height,
     canvas.width - 50,
@@ -48,15 +58,27 @@ function carverRedize(canvas) {
   );
 }
 
+function getCanvas() {}
+
 function Resizer() {
+  const canvasOriginal = useRef(null);
+  const canvasResized = useRef(null);
+
+  function getCanvasElements() {
+    return {
+      original: canvasOriginal.current,
+      resized: canvasResized.current,
+    };
+  }
+
   useEffect(() => {
-    const canvas = document.getElementById("app-canvas");
-    loadCanvasImage(canvas);
-  }, []);
+    if (canvasOriginal && canvasResized) {
+      loadCanvasImage(getCanvasElements());
+    }
+  }, [canvasOriginal, canvasResized]);
 
   function handleResize() {
-    const canvas = document.getElementById("app-canvas");
-    carverRedize(canvas);
+    carverRedize(getCanvasElements());
   }
 
   return (
@@ -64,13 +86,10 @@ function Resizer() {
       <button onClick={handleResize}>Click me!</button>
       <hr />
       <div>
-        <canvas id="app-canvas"></canvas>
+        <canvas ref={canvasOriginal}></canvas>
       </div>
       <div>
-        <canvas
-          id="test-canvas"
-          style={{ width: 300, height: 150, background: "#ddd" }}
-        ></canvas>
+        <canvas ref={canvasResized}></canvas>
       </div>
     </div>
   );

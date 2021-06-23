@@ -1,13 +1,24 @@
 import { useEffect } from "react";
 
-function loadImage(canvas) {
-  const ctx = canvas.getContext("2d");
-
+function loadImage(url) {
   const img = new Image();
   img.crossOrigin = "Anonymous";
-  img.src = "https://source.unsplash.com/collection/190727/800x450";
+  img.src = url;
 
-  img.onload = function () {
+  return new Promise((resolve, reject) => {
+    img.onload = function () {
+      resolve(img);
+    };
+    img.onerror = function (e) {
+      reject(e);
+    };
+  });
+}
+
+function loadCanvasImage(canvas) {
+  const ctx = canvas.getContext("2d");
+
+  loadImage("https://source.unsplash.com/YJjm6XD6zF4/1600x900").then((img) => {
     ctx.drawImage(
       img,
       0,
@@ -22,10 +33,7 @@ function loadImage(canvas) {
 
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     console.log(imageData);
-  };
-  img.onerror = function (e) {
-    console.log("error", e);
-  };
+  });
 }
 
 function carverRedize(canvas) {
@@ -52,7 +60,7 @@ function carverRedize(canvas) {
 function Resizer() {
   useEffect(() => {
     const canvas = document.getElementById("app-canvas");
-    loadImage(canvas);
+    loadCanvasImage(canvas);
   }, []);
 
   function handleResize() {

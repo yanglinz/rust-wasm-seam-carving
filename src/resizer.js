@@ -19,17 +19,8 @@ function loadCanvasImage(canvas) {
   const ctx = canvas.getContext("2d");
 
   loadImage("https://source.unsplash.com/YJjm6XD6zF4/1600x900").then((img) => {
-    ctx.drawImage(
-      img,
-      0,
-      0,
-      img.width,
-      img.height,
-      0,
-      0,
-      canvas.width,
-      canvas.height
-    );
+    // prettier-ignore
+    ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
 
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     console.log(imageData);

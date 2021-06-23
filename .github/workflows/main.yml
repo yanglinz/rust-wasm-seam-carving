@@ -10,7 +10,7 @@ jobs:
       - run: yarn install
       - run: PUBLIC_URL="/content-aware-image-resizer/" yarn build
       - uses: JamesIves/github-pages-deploy-action@4.1.4
-        if: github.ref == ‘refs/heads/main’
+        if: github.ref == 'refs/heads/main'
         with:
           branch: gh-pages
           folder: build

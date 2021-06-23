@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-const DEMO_IMAGE = "https://source.unsplash.com/YJjm6XD6zF4/1600x900";
+const DEMO_IMAGE = "https://source.unsplash.com/YJjm6XD6zF4/800x450";
 
 function loadImage(url) {
   const img = new Image();

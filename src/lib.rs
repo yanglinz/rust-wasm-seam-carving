@@ -19,8 +19,12 @@ pub fn resize(
     let height_select = height_current as f64;
 
     let image_data_current = ctx.get_image_data(0.0, 0.0, width_select, height_select)?;
+    let mut data: Vec<u8> = vec![];
+    for d in image_data_current.data().iter() {
+        data.push(*d);
+    }
     let mut image_data = carver::get_resized_image_data(
-        image_data_current,
+        data,
         width_current,
         height_current,
         width_target,
@@ -33,4 +37,20 @@ pub fn resize(
     )?;
 
     ctx2.put_image_data(&data, 0.0, 0.0)
+}
+
+pub fn resize_internal(
+    image_data: Vec<u8>,
+    width_current: u32,
+    height_current: u32,
+    width_target: u32,
+    height_target: u32,
+) -> Vec<u8> {
+    return carver::get_resized_image_data(
+        image_data,
+        width_current,
+        height_current,
+        width_target,
+        height_target,
+    );
 }

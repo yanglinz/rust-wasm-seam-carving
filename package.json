@@ -22,16 +22,19 @@
     "test": "react-app-rewired test"
   },
   "dependencies": {
-    "preact": "^10.5.13",
-    "preact-render-to-string": "^5.1.19",
+    "preact": "10.5.13",
+    "preact-render-to-string": "5.1.19",
     "react": "npm:@preact/compat",
     "react-dom": "npm:@preact/compat",
-    "wasm-pack": "^0.9.1"
+    "wasm-pack": "0.9.1"
   },
   "devDependencies": {
-    "@wasm-tool/wasm-pack-plugin": "^1.4.0",
-    "npm-run-all": "^4.1.5",
-    "react-app-rewired": "^2.1.8",
-    "react-scripts": "^4.0.3"
+    "@wasm-tool/wasm-pack-plugin": "1.4.0",
+    "autoprefixer": "9",
+    "npm-run-all": "4.1.5",
+    "postcss": "7",
+    "react-app-rewired": "2.1.8",
+    "react-scripts": "4.0.3",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat"
   }
 }

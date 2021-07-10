@@ -1,5 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
+
+import Header from "./components/Header";
 import Resizer from "./resizer";
 
 import "./index.css";
@@ -12,7 +14,7 @@ if (module.hot) {
 function App() {
   return (
     <div>
-      <h1>Content Aware Image Resizer</h1>
+      <Header />
       <Resizer />
     </div>
   );

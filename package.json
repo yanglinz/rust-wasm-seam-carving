@@ -29,6 +29,7 @@
     "wasm-pack": "0.9.1"
   },
   "devDependencies": {
+    "@craco/craco": "6.2.0",
     "@wasm-tool/wasm-pack-plugin": "1.4.0",
     "autoprefixer": "9",
     "npm-run-all": "4.1.5",

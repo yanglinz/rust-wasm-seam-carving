@@ -16,10 +16,10 @@
   "scripts": {
     "wasm-pack-dev": "wasm-pack --verbose build --out-dir=src/pkg --out-name=index --dev --no-typescript",
     "dev:rs": "cargo watch -i .gitignore -i 'src/pkg/*' -i 'src/**/*.{js,html}' -s 'yarn wasm-pack-dev'",
-    "dev:js": "FAST_REFRESH=true react-app-rewired start",
+    "dev:js": "FAST_REFRESH=true craco start",
     "dev": "run-p dev:*",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test"
+    "build": "craco build",
+    "test": "craco test"
   },
   "dependencies": {
     "preact": "10.5.13",

@@ -1,16 +1,19 @@
 {
   "files": {
-    "main.js": "/content-aware-image-resizer/static/js/main.ab80815f.chunk.js",
-    "main.js.map": "/content-aware-image-resizer/static/js/main.ab80815f.chunk.js.map",
-    "runtime-main.js": "/content-aware-image-resizer/static/js/runtime-main.e6f187cb.js",
-    "runtime-main.js.map": "/content-aware-image-resizer/static/js/runtime-main.e6f187cb.js.map",
-    "static/js/2.e21233e5.chunk.js": "/content-aware-image-resizer/static/js/2.e21233e5.chunk.js",
-    "1e400671308be900c7ba.module.wasm": "/content-aware-image-resizer/1e400671308be900c7ba.module.wasm",
-    "static/js/2.e21233e5.chunk.js.map": "/content-aware-image-resizer/static/js/2.e21233e5.chunk.js.map",
-    "index.html": "/content-aware-image-resizer/index.html"
+    "main.css": "/content-aware-image-resizer/static/css/main.51146856.chunk.css",
+    "main.js": "/content-aware-image-resizer/static/js/main.82e82709.chunk.js",
+    "main.js.map": "/content-aware-image-resizer/static/js/main.82e82709.chunk.js.map",
+    "runtime-main.js": "/content-aware-image-resizer/static/js/runtime-main.29186423.js",
+    "runtime-main.js.map": "/content-aware-image-resizer/static/js/runtime-main.29186423.js.map",
+    "static/js/2.ecf0a34d.chunk.js": "/content-aware-image-resizer/static/js/2.ecf0a34d.chunk.js",
+    "fdcfb47c28dba3251cd5.module.wasm": "/content-aware-image-resizer/fdcfb47c28dba3251cd5.module.wasm",
+    "static/js/2.ecf0a34d.chunk.js.map": "/content-aware-image-resizer/static/js/2.ecf0a34d.chunk.js.map",
+    "index.html": "/content-aware-image-resizer/index.html",
+    "static/css/main.51146856.chunk.css.map": "/content-aware-image-resizer/static/css/main.51146856.chunk.css.map"
   },
   "entrypoints": [
-    "static/js/runtime-main.e6f187cb.js",
-    "static/js/main.ab80815f.chunk.js"
+    "static/js/runtime-main.29186423.js",
+    "static/css/main.51146856.chunk.css",
+    "static/js/main.82e82709.chunk.js"
   ]
 }

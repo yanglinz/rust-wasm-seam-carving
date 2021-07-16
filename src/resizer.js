@@ -58,8 +58,6 @@ function carverRedize(canvasElements) {
   );
 }
 
-function getCanvas() {}
-
 function Resizer() {
   const canvasOriginal = useRef(null);
   const canvasResized = useRef(null);

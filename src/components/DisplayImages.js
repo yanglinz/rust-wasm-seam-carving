@@ -2,7 +2,7 @@ import CanvasImage from "./CanvasImage";
 
 function DisplayImages(props) {
   return (
-    <div>
+    <div className="border-8 border-gray-600 border-opacity-5">
       <CanvasImage src={props.src} />
     </div>
   );

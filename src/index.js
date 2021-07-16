@@ -1,15 +1,19 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import Resizer from "./resizer";
+import DisplayImages from "./components/DisplayImages";
 import Controls from "./components/Controls";
 
 import "./index.css";
 
+const DEMO_IMAGE = "https://source.unsplash.com/yRjLihK35Yw/800x450";
+
 function App() {
   return (
     <div className="App flex flex-col h-screen">
-      <div className="flex-grow">{/* <Resizer /> */}</div>
+      <div className="flex-grow">
+        <DisplayImages src={DEMO_IMAGE} />
+      </div>
 
       <div className="border-t border-gray-150 p-10 bg-white">
         <Controls />

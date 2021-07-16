@@ -16,16 +16,16 @@ function loadImage(url) {
 }
 
 function loadCanvasImage(imageSrc, canvasElement) {
-  loadImage(DEMO_IMAGE).then((img) => {
+  loadImage(imageSrc).then((img) => {
     // TODO: Think of high DPI screens / scale down heuristics
     canvasElement.width = img.width;
     canvasElement.height = img.height;
 
-    const ctx = original.getContext("2d");
+    const ctx = canvasElement.getContext("2d");
     // prettier-ignore
-    ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, original.width, original.height);
+    ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvasElement.width, canvasElement.height);
     // prettier-ignore
-    const imageData = ctx.getImageData(0, 0, original.width, original.height);
+    const imageData = ctx.getImageData(0, 0, canvasElement.width, canvasElement.height);
     console.log(imageData);
   });
 }

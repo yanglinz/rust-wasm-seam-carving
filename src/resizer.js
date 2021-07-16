@@ -2,8 +2,6 @@ import { useEffect, useRef } from "react";
 
 import { resizeImage } from "./lib";
 
-// const DEMO_IMAGE = "https://source.unsplash.com/yRjLihK35Yw/800x450";
-
 function Resizer() {
   const canvasOriginal = useRef(null);
   const canvasResized = useRef(null);

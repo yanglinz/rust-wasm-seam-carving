@@ -40,7 +40,7 @@ function App() {
     dispatch({ type: "RESIZE" });
   }
 
-  const DEMO_IMAGE = "https://source.unsplash.com/yRjLihK35Yw/800x150";
+  const DEMO_IMAGE = "https://source.unsplash.com/yRjLihK35Yw/800x450";
   return (
     <div className="App flex flex-col h-screen">
       <div className="flex-grow">

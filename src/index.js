@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import Resizer from "./resizer";
+import Controls from "./components/Controls";
 
 import "./index.css";
 
@@ -12,8 +13,14 @@ if (module.hot) {
 
 function App() {
   return (
-    <div className="App">
-      <Resizer />
+    <div className="App flex flex-col h-screen">
+      <div className="flex-grow">
+        <Resizer />
+      </div>
+
+      <div className="border-t border-gray-100 p-4 bg-white">
+        <Controls />
+      </div>
     </div>
   );
 }

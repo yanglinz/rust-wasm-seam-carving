@@ -15,7 +15,7 @@ function App() {
   return (
     <div className="App flex flex-col h-screen">
       <div className="flex-grow">
-        <Resizer />
+        {/* <Resizer /> */}
       </div>
 
       <div className="border-t border-gray-150 p-10 bg-white">

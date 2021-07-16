@@ -13,7 +13,7 @@ function App() {
     <div className="App flex flex-col h-screen">
       <div className="flex-grow">
         <div className="flex items-center	justify-center h-full">
-          <DisplayImages src={DEMO_IMAGE} />
+          <DisplayImages src={DEMO_IMAGE} currentDisplay="SOURCE" />
         </div>
       </div>
 

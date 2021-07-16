@@ -1,3 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.App {
+  background: rgb(255, 242, 248);
+  background: linear-gradient(
+    27deg,
+    rgba(255, 242, 248, 1) 0%,
+    rgba(208, 229, 255, 1) 100%
+  );
+}

@@ -18,7 +18,7 @@ function App() {
         <Resizer />
       </div>
 
-      <div className="border-t border-gray-100 p-4 bg-white">
+      <div className="border-t border-gray-150 p-10 bg-white">
         <Controls />
       </div>
     </div>

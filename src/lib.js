@@ -1,4 +1,10 @@
-export function resizeImage(canvasElements, resizedWidth, resizedHeight) {
+export function resizeImage(
+  canvasElements,
+  originalWidth,
+  originalHeight,
+  resizedWidth,
+  resizedHeight
+) {
   const { source, target } = canvasElements;
 
   function wasmResize(...args) {
@@ -16,9 +22,9 @@ export function resizeImage(canvasElements, resizedWidth, resizedHeight) {
   wasmResize(
     ctxSource,
     ctxTarget,
-    resized.width,
-    resized.height,
-    resized.width - 1,
-    resized.height
+    originalWidth,
+    originalHeight,
+    resizedWidth,
+    resizedHeight
   );
 }

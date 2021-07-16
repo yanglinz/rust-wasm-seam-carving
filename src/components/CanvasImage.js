@@ -39,11 +39,7 @@ function CanvasImage(props) {
     }
   }, [ref]);
 
-  return (
-    <canvas id={props.id} ref={ref}>
-      {/* foo */}
-    </canvas>
-  );
+  return <canvas id={props.id} ref={ref}></canvas>;
 }
 
 export default CanvasImage;

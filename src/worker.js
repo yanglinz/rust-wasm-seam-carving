@@ -35,12 +35,29 @@ function resizeTargetImage(
   targetWidth,
   targetHeight
 ) {
-  console.log("resizeTargetImage", {
+  function wasmResize(...args) {
+    import("./pkg")
+      .then((module) => module.resize(...args))
+      .catch(console.error);
+  }
+
+  const { source, target } = self.canvasElements;
+  target.width = source.width;
+  target.height = source.height;
+
+  // Instead of overwriting the original canvas data, we'll transfer
+  // the resized image data onto a second, blank canvas.
+  const ctxSource = source.getContext("2d");
+  const ctxTarget = target.getContext("2d");
+
+  wasmResize(
+    ctxSource,
+    ctxTarget,
     sourceWidth,
     sourceHeight,
     targetWidth,
-    targetHeight,
-  });
+    targetHeight
+  );
 }
 
 self.onmessage = function handleMessage(message) {
@@ -52,7 +69,6 @@ self.onmessage = function handleMessage(message) {
 
   const name = Array.isArray(message.data) ? message.data[0] : undefined;
   const handler = handlersByName[name];
-
   if (handler) {
     const [_, ...args] = message.data;
     handler(...args);

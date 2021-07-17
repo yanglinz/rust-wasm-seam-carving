@@ -5,7 +5,7 @@ import { resizeImage } from "./lib";
 import { onDocumentReady } from "./helpers/dom";
 import { memoize } from "./helpers/cache";
 import Worker from "worker-loader!./worker";
-import DisplayImages from "./components/DisplayImages";
+import ImageCanvas from "./components/ImageCanvas";
 import Controls from "./components/Controls";
 
 import "./index.css";
@@ -57,7 +57,7 @@ function App() {
     <div className="App flex flex-col h-screen">
       <div className="flex-grow">
         <div className="flex items-center	justify-center h-full">
-          <DisplayImages src={DEMO_IMAGE} currentDisplay={state.display} />
+          <ImageCanvas src={DEMO_IMAGE} currentDisplay={state.display} />
         </div>
       </div>
 

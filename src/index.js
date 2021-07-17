@@ -1,11 +1,11 @@
-import React, { useReducer } from "react";
+import React, { useReducer, useEffect } from "react";
 import ReactDOM from "react-dom";
 
 import { resizeImage } from "./lib";
 import { onDocumentReady } from "./helpers/dom";
 import { memoize } from "./helpers/cache";
 import Worker from "worker-loader!./worker";
-import ImageCanvas from "./components/ImageCanvas";
+import ImageCanvas, { getCanvasElements } from "./components/ImageCanvas";
 import Controls from "./components/Controls";
 
 import "./index.css";
@@ -22,7 +22,14 @@ function reducer(state, action) {
 }
 
 function _getWorkerInstance() {
-  return new Worker();
+  const _worker = new Worker();
+  const { source, target } = getCanvasElements();
+
+  // We can only send canvas elements once from the main thread to the worker.
+  // Once sent, the offscreen canvas are in a detached state.
+  // So we'll call this once at the start of the worker lifecycle.
+  _worker.postMessage(["init", { source, target }], [source, target]);
+  return _worker;
 }
 
 const getWorker = memoize(_getWorkerInstance);
@@ -30,8 +37,11 @@ const getWorker = memoize(_getWorkerInstance);
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const worker = getWorker();
-  console.log(worker);
+  function loadImage() {
+    const DEMO_IMAGE = "https://source.unsplash.com/yRjLihK35Yw/800x450";
+    const worker = getWorker();
+    worker.postMessage(["loadSourceImage", DEMO_IMAGE]);
+  }
 
   function handleResize() {
     const { source, target } = getCanvasElements();
@@ -51,12 +61,13 @@ function App() {
     dispatch({ type: "RESIZE" });
   }
 
-  const DEMO_IMAGE = "https://source.unsplash.com/yRjLihK35Yw/800x450";
+  useEffect(loadImage, []);
+
   return (
     <div className="App flex flex-col h-screen">
       <div className="flex-grow">
         <div className="flex items-center	justify-center h-full">
-          <ImageCanvas src={DEMO_IMAGE} currentDisplay={state.display} />
+          <ImageCanvas currentDisplay={state.display} />
         </div>
       </div>
 

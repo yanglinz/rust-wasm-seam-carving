@@ -2,6 +2,7 @@ import React, { useReducer } from "react";
 import ReactDOM from "react-dom";
 
 import { resizeImage } from "./lib";
+import { onDocumentReady } from "./helpers/dom";
 import DisplayImages from "./components/DisplayImages";
 import Controls from "./components/Controls";
 
@@ -56,15 +57,7 @@ function App() {
   );
 }
 
-function documentReady(fn) {
-  if (document.readyState != "loading") {
-    fn();
-  } else {
-    document.addEventListener("DOMContentLoaded", fn);
-  }
-}
-
-documentReady(() => {
+onDocumentReady(() => {
   ReactDOM.render(<App />, document.getElementById("app"));
 });
 

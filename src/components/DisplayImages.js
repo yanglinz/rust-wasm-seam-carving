@@ -1,5 +1,3 @@
-import CanvasImage from "./CanvasImage";
-
 function DisplayImages(props) {
   const { currentDisplay } = props;
 
@@ -9,7 +7,7 @@ function DisplayImages(props) {
   return (
     <div className="border-8 border-gray-600 border-opacity-5">
       <div className={originalClassNames}>
-        <CanvasImage id="canvas-source" src={props.src} />
+        <canvas id="canvas-target"></canvas>
       </div>
 
       <div className={targetClassNames}>

@@ -16,7 +16,7 @@ function loadSourceImage(imageUrl) {
   loadImage(imageUrl).then((img) => {
     const { source } = self.canvasElements;
 
-    // TODO: Think of high DPI screens / scale down heuristics
+    // TODO: Handle high DPI screens / scale down heuristics
     source.width = img.width;
     source.height = img.height;
 

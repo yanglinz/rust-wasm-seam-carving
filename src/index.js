@@ -44,19 +44,19 @@ function App() {
   }
 
   function handleResize() {
-    const { source, target } = getCanvasElements();
-    target.width = source.width;
-    target.height = source.height;
+    const { detachedSource } = getCanvasElements();
 
-    const resizedWidth = source.width - 2;
-    const resizedHeight = source.height;
-    resizeImage(
-      { source, target },
-      source.width,
-      source.height,
+    const worker = getWorker();
+    const resizedWidth = detachedSource.width - 2;
+    const resizedHeight = detachedSource.height;
+
+    worker.postMessage([
+      "resizeTargetImage",
+      detachedSource.width,
+      detachedSource.height,
       resizedWidth,
-      resizedHeight
-    );
+      resizedHeight,
+    ]);
 
     dispatch({ type: "RESIZE" });
   }

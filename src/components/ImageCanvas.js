@@ -16,7 +16,12 @@ export function getCanvasElements() {
   const offscreenTarget = target
     ? getOffscreenCanvas("canvas-target")
     : undefined;
-  return { source: offscreenSource, target: offscreenTarget };
+  return {
+    source: offscreenSource,
+    detachedSource: source,
+    target: offscreenTarget,
+    detachedTarget: target,
+  };
 }
 
 function ImageCanvas(props) {

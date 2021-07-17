@@ -29,8 +29,18 @@ function loadSourceImage(imageUrl) {
   });
 }
 
-function resizeTargetImage() {
-  console.log("resizeTargetImage");
+function resizeTargetImage(
+  sourceWidth,
+  sourceHeight,
+  targetWidth,
+  targetHeight
+) {
+  console.log("resizeTargetImage", {
+    sourceWidth,
+    sourceHeight,
+    targetWidth,
+    targetHeight,
+  });
 }
 
 self.onmessage = function handleMessage(message) {

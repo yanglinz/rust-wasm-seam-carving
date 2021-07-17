@@ -1,22 +1,24 @@
 {
   "files": {
     "main.css": "/content-aware-image-resizer/static/css/main.a3e51905.chunk.css",
-    "main.js": "/content-aware-image-resizer/static/js/main.8896ee82.chunk.js",
-    "main.js.map": "/content-aware-image-resizer/static/js/main.8896ee82.chunk.js.map",
-    "runtime-main.js": "/content-aware-image-resizer/static/js/runtime-main.acf6b659.js",
-    "runtime-main.js.map": "/content-aware-image-resizer/static/js/runtime-main.acf6b659.js.map",
-    "static/js/2.0baf7c89.chunk.js": "/content-aware-image-resizer/static/js/2.0baf7c89.chunk.js",
-    "static/js/2.0baf7c89.chunk.js.map": "/content-aware-image-resizer/static/js/2.0baf7c89.chunk.js.map",
-    "static/js/3.9b39bfb7.chunk.js": "/content-aware-image-resizer/static/js/3.9b39bfb7.chunk.js",
-    "06cc8dbf63120a501e4f.module.wasm": "/content-aware-image-resizer/06cc8dbf63120a501e4f.module.wasm",
-    "static/js/3.9b39bfb7.chunk.js.map": "/content-aware-image-resizer/static/js/3.9b39bfb7.chunk.js.map",
+    "main.js": "/content-aware-image-resizer/static/js/main.bc30ecb1.chunk.js",
+    "main.js.map": "/content-aware-image-resizer/static/js/main.bc30ecb1.chunk.js.map",
+    "runtime-main.js": "/content-aware-image-resizer/static/js/runtime-main.ce5b037e.js",
+    "runtime-main.js.map": "/content-aware-image-resizer/static/js/runtime-main.ce5b037e.js.map",
+    "static/js/2.764361e2.chunk.js": "/content-aware-image-resizer/static/js/2.764361e2.chunk.js",
+    "static/js/2.764361e2.chunk.js.map": "/content-aware-image-resizer/static/js/2.764361e2.chunk.js.map",
+    "8942e4f58593bb4a3dca.module.wasm": "/content-aware-image-resizer/8942e4f58593bb4a3dca.module.wasm",
     "index.html": "/content-aware-image-resizer/index.html",
-    "static/css/main.a3e51905.chunk.css.map": "/content-aware-image-resizer/static/css/main.a3e51905.chunk.css.map"
+    "static/css/main.a3e51905.chunk.css.map": "/content-aware-image-resizer/static/css/main.a3e51905.chunk.css.map",
+    "static/js/1.f808adb6.chunk.worker.js": "/content-aware-image-resizer/static/js/1.f808adb6.chunk.worker.js",
+    "static/js/1.f808adb6.chunk.worker.js.map": "/content-aware-image-resizer/static/js/1.f808adb6.chunk.worker.js.map",
+    "static/js/worker.327b9030.worker.js": "/content-aware-image-resizer/static/js/worker.327b9030.worker.js",
+    "static/js/worker.327b9030.worker.js.map": "/content-aware-image-resizer/static/js/worker.327b9030.worker.js.map"
   },
   "entrypoints": [
-    "static/js/runtime-main.acf6b659.js",
-    "static/js/2.0baf7c89.chunk.js",
+    "static/js/runtime-main.ce5b037e.js",
+    "static/js/2.764361e2.chunk.js",
     "static/css/main.a3e51905.chunk.css",
-    "static/js/main.8896ee82.chunk.js"
+    "static/js/main.bc30ecb1.chunk.js"
   ]
 }

@@ -1,7 +1,6 @@
 import React, { useReducer, useEffect } from "react";
 import ReactDOM from "react-dom";
 
-import { resizeImage } from "./lib";
 import { onDocumentReady } from "./helpers/dom";
 import { memoize } from "./helpers/cache";
 import Worker from "worker-loader!./worker";

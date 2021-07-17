@@ -1,4 +1,25 @@
-function DisplayImages(props) {
+import { memoize } from "../helpers/cache";
+
+function _getOffscreenCanvas(canvasId) {
+  const canvas = document.getElementById(canvasId);
+  return canvas.transferControlToOffscreen();
+}
+
+const getOffscreenCanvas = memoize(_getOffscreenCanvas);
+
+export function getCanvasElements() {
+  const source = document.getElementById("canvas-source");
+  const offscreenSource = source
+    ? getOffscreenCanvas("canvas-source")
+    : undefined;
+  const target = document.getElementById("canvas-target");
+  const offscreenTarget = target
+    ? getOffscreenCanvas("canvas-target")
+    : undefined;
+  return { source: offscreenSource, target: offscreenTarget };
+}
+
+function ImageCanvas(props) {
   const { currentDisplay } = props;
 
   const originalClassNames = currentDisplay === "SOURCE" ? "" : "hidden";
@@ -7,7 +28,7 @@ function DisplayImages(props) {
   return (
     <div className="border-8 border-gray-600 border-opacity-5">
       <div className={originalClassNames}>
-        <canvas id="canvas-target"></canvas>
+        <canvas id="canvas-source"></canvas>
       </div>
 
       <div className={targetClassNames}>
@@ -17,4 +38,4 @@ function DisplayImages(props) {
   );
 }
 
-export default DisplayImages;
+export default ImageCanvas;

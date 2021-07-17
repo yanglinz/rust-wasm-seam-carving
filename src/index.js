@@ -34,8 +34,7 @@ function App() {
   console.log(worker);
 
   function handleResize() {
-    const source = document.getElementById("canvas-source");
-    const target = document.getElementById("canvas-target");
+    const { source, target } = getCanvasElements();
     target.width = source.width;
     target.height = source.height;
 

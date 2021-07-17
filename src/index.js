@@ -3,6 +3,8 @@ import ReactDOM from "react-dom";
 
 import { resizeImage } from "./lib";
 import { onDocumentReady } from "./helpers/dom";
+import { memoize } from "./helpers/cache";
+import Worker from "worker-loader!./worker";
 import DisplayImages from "./components/DisplayImages";
 import Controls from "./components/Controls";
 
@@ -19,8 +21,17 @@ function reducer(state, action) {
   }
 }
 
+function _getWorkerInstance() {
+  return new Worker();
+}
+
+const getWorker = memoize(_getWorkerInstance);
+
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  const worker = getWorker();
+  console.log(worker);
 
   function handleResize() {
     const source = document.getElementById("canvas-source");

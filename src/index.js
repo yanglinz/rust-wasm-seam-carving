@@ -37,9 +37,9 @@ function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   function loadImage() {
-    const DEMO_IMAGE = "https://source.unsplash.com/yRjLihK35Yw/800x450";
+    // const DEMO_IMAGE = "https://source.unsplash.com/yRjLihK35Yw/800x450";
     const worker = getWorker();
-    worker.postMessage(["loadSourceImage", DEMO_IMAGE]);
+    // worker.postMessage(["loadSourceImage", DEMO_IMAGE]);
   }
 
   function handleResize() {

@@ -38,19 +38,3 @@ pub fn resize(
 
     ctx2.put_image_data(&data, 0.0, 0.0)
 }
-
-pub fn resize_internal(
-    image_data: Vec<u8>,
-    width_current: u32,
-    height_current: u32,
-    width_target: u32,
-    height_target: u32,
-) -> Vec<u8> {
-    return carver::get_resized_image_data(
-        image_data,
-        width_current,
-        height_current,
-        width_target,
-        height_target,
-    );
-}

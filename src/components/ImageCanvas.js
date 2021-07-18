@@ -1,27 +1,7 @@
-import { memoize } from "../helpers/cache";
-
-function _getOffscreenCanvas(canvasId) {
-  const canvas = document.getElementById(canvasId);
-  return canvas.transferControlToOffscreen();
-}
-
-const getOffscreenCanvas = memoize(_getOffscreenCanvas);
-
 export function getCanvasElements() {
   const source = document.getElementById("canvas-source");
-  const offscreenSource = source
-    ? getOffscreenCanvas("canvas-source")
-    : undefined;
   const target = document.getElementById("canvas-target");
-  const offscreenTarget = target
-    ? getOffscreenCanvas("canvas-target")
-    : undefined;
-  return {
-    source: offscreenSource,
-    detachedSource: source,
-    target: offscreenTarget,
-    detachedTarget: target,
-  };
+  return { source, target };
 }
 
 function ImageCanvas(props) {

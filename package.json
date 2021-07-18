@@ -14,7 +14,7 @@
     ]
   },
   "scripts": {
-    "wasm-pack-dev": "wasm-pack --verbose build --out-dir=src/pkg --out-name=index --dev --no-typescript",
+    "wasm-pack-dev": "wasm-pack --verbose build --out-dir=src/pkg --out-name=index --dev",
     "dev:rs": "cargo watch -i .gitignore -i 'src/pkg/*' -i 'src/**/*.{js,html}' -s 'yarn wasm-pack-dev'",
     "dev:js": "FAST_REFRESH=true craco start",
     "dev": "run-p dev:*",
@@ -26,7 +26,7 @@
     "preact-render-to-string": "5.1.19",
     "react": "npm:@preact/compat",
     "react-dom": "npm:@preact/compat",
-    "wasm-pack": "0.9.1"
+    "wasm-pack": "0.10.0"
   },
   "devDependencies": {
     "@craco/craco": "6.2.0",
@@ -36,6 +36,7 @@
     "postcss": "7",
     "react-scripts": "4.0.3",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat",
+    "wasm-output": "file:./pkg",
     "worker-loader": "^3.0.8"
   }
 }

@@ -23,7 +23,9 @@ function App() {
 
   function init() {
     const DEMO_IMAGE = "https://source.unsplash.com/yRjLihK35Yw/800x450";
-    import("./entry");
+    import("./entry")
+      .then((module) => module.initialize())
+      .catch(console.error);
   }
 
   function handleResize() {

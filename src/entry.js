@@ -1,11 +1,25 @@
-import { memory } from "./pkg/content_aware_image_resizer_bg.wasm";
+import { SeamCarver, wasm_memory } from "./pkg";
 
-console.log("Hello world!", memory);
-
-// TODO: 
+// TODO:
 // 1. Initialize image
 // 2. Copy image array to Rust WASM
-// 3. Implement a Carver().tick() mechanism
 // 4. Read post-.tick() array pointer
 // 5. Draw post-.tick() pointer
 // 6. Do it all in an animation loop
+
+function memory() {
+  return wasm_memory();
+}
+
+export function initialize() {
+  const carver = SeamCarver.new();
+  carver.mark_seam();
+  carver.delete_seam();
+
+  
+  const imageDataPtr = carver.image_data_ptr();
+  const rustValues = new Uint8Array(memory().buffer, imageDataPtr, 4);
+
+  console.log({ imageDataPtr });
+  console.log(rustValues);
+}

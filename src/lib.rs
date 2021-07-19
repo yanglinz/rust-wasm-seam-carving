@@ -49,12 +49,11 @@ impl SeamCarver {
     }
 
     pub fn delete_seam(&mut self) {
+        log!("delete_seam");
+
         // Randomly delete things for now
+        self.image_data.drain(0..self.width as usize); // Remove the first n elements
         self.width -= 1;
-
-        // Remove width * 4 elements
-
-        log!("delete_seam")
     }
 
     pub fn image_data_ptr(&self) -> *const u8 {

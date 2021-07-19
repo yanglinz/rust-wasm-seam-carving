@@ -1,27 +1,71 @@
-import { SeamCarver, wasm_memory } from "./pkg";
+import React, { useReducer, useEffect } from "react";
+import ReactDOM from "react-dom";
 
-// TODO:
-// 1. Initialize image
-// 2. Copy image array to Rust WASM
-// 4. Read post-.tick() array pointer
-// 5. Draw post-.tick() pointer
-// 6. Do it all in an animation loop
+import { SeamCarver, wasm_memory as memory } from "./pkg";
+import { onDocumentReady } from "./helpers/dom";
+import ImageCanvas, { getCanvasElements } from "./components/ImageCanvas";
+import Controls from "./components/Controls";
 
-function memory() {
-  return wasm_memory();
+import "./index.css";
+
+const initialState = { display: "SOURCE" };
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "RESIZE":
+      return { display: "TARGET" };
+    default:
+      throw new Error("Unknown action type in reducer.");
+  }
 }
 
-export function initialize() {
-  const canvas = document.getElementById("canvas-source");
-  const ctx = canvas.getContext("2d");
+function App() {
+  const [state, dispatch] = useReducer(reducer, initialState);
 
-  const carver = SeamCarver.new(ctx, 32, 45);
-  carver.mark_seam();
-  carver.delete_seam();
+  function init() {
+    const DEMO_IMAGE = "https://source.unsplash.com/yRjLihK35Yw/800x450";
+    const canvas = document.getElementById("canvas-source");
+    const ctx = canvas.getContext("2d");
 
-  const imageDataPtr = carver.image_data_ptr();
-  const rustValues = new Uint8Array(memory().buffer, imageDataPtr, 4);
+    const carver = SeamCarver.new(ctx, 32, 45);
+    carver.mark_seam();
+    carver.delete_seam();
 
-  console.log({ imageDataPtr });
-  console.log(rustValues);
+    const imageDataPtr = carver.image_data_ptr();
+    const rustValues = new Uint8Array(memory().buffer, imageDataPtr, 4);
+
+    console.log({ imageDataPtr });
+    console.log(rustValues);
+  }
+
+  function handleResize() {
+    const { source } = getCanvasElements();
+
+    dispatch({ type: "RESIZE" });
+  }
+
+  useEffect(init, []);
+
+  return (
+    <div className="App flex flex-col h-screen">
+      <div className="flex-grow">
+        <div className="flex items-center	justify-center h-full">
+          <ImageCanvas currentDisplay={state.display} />
+        </div>
+      </div>
+
+      <div className="border-t border-gray-150 p-10 bg-white">
+        <Controls handleResize={handleResize} />
+      </div>
+    </div>
+  );
+}
+
+onDocumentReady(() => {
+  ReactDOM.render(<App />, document.getElementById("app"));
+});
+
+if (module.hot) {
+  // Disable HMR in development
+  module.hot.decline();
 }

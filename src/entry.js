@@ -54,8 +54,7 @@ function App() {
       source.height
     );
 
-    const steps = 1;
-    Array.from(Array(steps)).forEach(() => {
+    function resize1px() {
       // Modify the image
       carver.mark_seam();
       carver.delete_seam();
@@ -77,7 +76,21 @@ function App() {
         carver.height
       );
       target.getContext("2d").putImageData(imageDataWrapper, 0, 0);
-    });
+    }
+
+    let steps = 200;
+    function incrementalResize() {
+      if (steps <= 0) {
+        return;
+      }
+
+      resize1px();
+      steps -= 1;
+
+      requestAnimationFrame(incrementalResize);
+    }
+
+    requestAnimationFrame(incrementalResize);
 
     dispatch({ type: "RESIZE" });
   }

@@ -26,10 +26,21 @@ impl SeamCarver {
         log!("width: {}", width);
         log!("height: {}", height);
 
+        // Find a more consice way to create the vector
+        let mut image_data: Vec<u8> = vec![];
+        for d in ctx
+            .get_image_data(0.0, 0.0, width as f64, height as f64)
+            .unwrap()
+            .data()
+            .iter()
+        {
+            image_data.push(*d);
+        }
+
         SeamCarver {
             width: 64,
             height: 64,
-            image_data: vec![41, 155, 16, 245],
+            image_data: image_data,
         }
     }
 

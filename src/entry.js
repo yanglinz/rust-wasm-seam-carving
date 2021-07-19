@@ -40,8 +40,8 @@ function App() {
         ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, source.width, source.height);
         // prettier-ignore
 
-        // const imageData = ctx.getImageData(0, 0, source.width, source.height);
-        // console.log(imageData);
+        const imageData = ctx.getImageData(0, 0, source.width, source.height);
+        console.log(imageData);
       });
   }
 

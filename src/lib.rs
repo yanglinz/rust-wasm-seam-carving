@@ -22,7 +22,10 @@ pub struct SeamCarver {
 
 #[wasm_bindgen]
 impl SeamCarver {
-    pub fn new() -> SeamCarver {
+    pub fn new(ctx: &CanvasRenderingContext2d, width: u32, height: u32) -> SeamCarver {
+        log!("width: {}", width);
+        log!("height: {}", height);
+
         SeamCarver {
             width: 64,
             height: 64,

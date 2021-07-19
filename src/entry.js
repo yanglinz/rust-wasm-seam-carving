@@ -12,11 +12,13 @@ function memory() {
 }
 
 export function initialize() {
-  const carver = SeamCarver.new();
+  const canvas = document.getElementById("canvas-source");
+  const ctx = canvas.getContext("2d");
+
+  const carver = SeamCarver.new(ctx, 32, 45);
   carver.mark_seam();
   carver.delete_seam();
 
-  
   const imageDataPtr = carver.image_data_ptr();
   const rustValues = new Uint8Array(memory().buffer, imageDataPtr, 4);
 

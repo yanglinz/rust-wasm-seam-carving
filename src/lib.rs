@@ -14,8 +14,8 @@ pub struct ColorRange(u8);
 
 #[wasm_bindgen]
 pub struct SeamCarver {
-    width: u32,
-    height: u32,
+    pub width: u32,
+    pub height: u32,
     image_data: Vec<u8>,
     // image_metadata
 }
@@ -35,8 +35,8 @@ impl SeamCarver {
         }
 
         SeamCarver {
-            width: 64,
-            height: 64,
+            width: width,
+            height: height,
             image_data: image_data,
         }
     }
@@ -58,8 +58,6 @@ impl SeamCarver {
     }
 
     pub fn image_data_ptr(&self) -> *const u8 {
-        // Return a pointer, width, height
-
         self.image_data.as_ptr()
     }
 }

@@ -22,8 +22,31 @@ function reducer(state, action) {
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  function init() {
+  function loadImage() {
+    const { source } = getCanvasElements();
     const DEMO_IMAGE = "https://source.unsplash.com/yRjLihK35Yw/800x450";
+
+    // TODO: Handle image loading failure
+    return fetch(DEMO_IMAGE)
+      .then((r) => r.blob())
+      .then((blob) => createImageBitmap(blob))
+      .then((img) => {
+        // TODO: Handle high DPI screens / scale down heuristics
+        source.width = img.width;
+        source.height = img.height;
+
+        const ctx = source.getContext("2d");
+        // prettier-ignore
+        ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, source.width, source.height);
+        // prettier-ignore
+        const imageData = ctx.getImageData(0, 0, source.width, source.height);
+        console.log(imageData);
+      });
+  }
+
+  function handleResize() {
+    const { source } = getCanvasElements();
+
     const canvas = document.getElementById("canvas-source");
     const ctx = canvas.getContext("2d");
 
@@ -36,15 +59,11 @@ function App() {
 
     console.log({ imageDataPtr });
     console.log(rustValues);
-  }
-
-  function handleResize() {
-    const { source } = getCanvasElements();
 
     dispatch({ type: "RESIZE" });
   }
 
-  useEffect(init, []);
+  useEffect(loadImage, []);
 
   return (
     <div className="App flex flex-col h-screen">

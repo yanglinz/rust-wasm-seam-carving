@@ -46,19 +46,37 @@ function App() {
   }
 
   function handleResize() {
-    const { source } = getCanvasElements();
-    const ctx = source.getContext("2d");
+    const { source, target } = getCanvasElements();
 
-    const carver = SeamCarver.new(ctx, source.width, source.height);
+    const carver = SeamCarver.new(
+      source.getContext("2d"),
+      source.width,
+      source.height
+    );
 
     const steps = 1;
     Array.from(Array(steps)).forEach(() => {
+      // Modify the image
       carver.mark_seam();
       carver.delete_seam();
+
+      // Get the image data
       const imageDataPtr = carver.image_data_ptr();
-      const rustValues = new Uint8Array(memory().buffer, imageDataPtr, 4);
-      console.log({ imageDataPtr });
-      console.log(rustValues);
+      const imageData = new Uint8ClampedArray(
+        memory().buffer,
+        imageDataPtr,
+        carver.width * carver.height * 4
+      );
+
+      // Draw the image data
+      target.width = carver.width;
+      target.height = carver.height;
+      const imageDataWrapper = new ImageData(
+        imageData,
+        carver.width,
+        carver.height
+      );
+      target.getContext("2d").putImageData(imageDataWrapper, 0, 0);
     });
 
     dispatch({ type: "RESIZE" });

@@ -24,7 +24,7 @@ function App() {
 
   function loadImage() {
     const { source } = getCanvasElements();
-    const DEMO_IMAGE = "https://source.unsplash.com/yRjLihK35Yw/800x450";
+    const DEMO_IMAGE = "https://source.unsplash.com/yRjLihK35Yw/500x250";
 
     // TODO: Handle image loading failure
     return fetch(DEMO_IMAGE)
@@ -39,8 +39,9 @@ function App() {
         // prettier-ignore
         ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, source.width, source.height);
         // prettier-ignore
-        const imageData = ctx.getImageData(0, 0, source.width, source.height);
-        console.log(imageData);
+
+        // const imageData = ctx.getImageData(0, 0, source.width, source.height);
+        // console.log(imageData);
       });
   }
 

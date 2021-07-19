@@ -23,9 +23,6 @@ pub struct SeamCarver {
 #[wasm_bindgen]
 impl SeamCarver {
     pub fn new(ctx: &CanvasRenderingContext2d, width: u32, height: u32) -> SeamCarver {
-        log!("width: {}", width);
-        log!("height: {}", height);
-
         // Find a more consice way to create the vector
         let mut image_data: Vec<u8> = vec![];
         for d in ctx
@@ -47,14 +44,22 @@ impl SeamCarver {
     fn assert_invariant(&mut self) {}
 
     pub fn mark_seam(&mut self) {
+        // Do nothing for now
         log!("mark_seam")
     }
 
     pub fn delete_seam(&mut self) {
+        // Randomly delete things for now
+        self.width -= 1;
+
+        // Remove width * 4 elements
+
         log!("delete_seam")
     }
 
     pub fn image_data_ptr(&self) -> *const u8 {
+        // Return a pointer, width, height
+
         self.image_data.as_ptr()
     }
 }

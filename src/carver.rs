@@ -5,8 +5,8 @@ extern crate web_sys;
 
 #[derive(Copy, Clone)]
 pub struct ImageContext {
-    width: u32,
-    height: u32,
+    pub width: u32,
+    pub height: u32,
 }
 
 // Zero-indexed representation of image pixel coordinates

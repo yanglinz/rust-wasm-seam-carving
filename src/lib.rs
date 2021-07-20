@@ -27,6 +27,7 @@ impl SeamCarver {
     pub fn new(ctx: &CanvasRenderingContext2d, width: u32, height: u32) -> SeamCarver {
         // Find a more consice way to create the vector
         let mut image_data: Vec<u8> = vec![];
+        let mut image_data_copy: Vec<u8> = vec![];
         for d in ctx
             .get_image_data(0.0, 0.0, width as f64, height as f64)
             .unwrap()
@@ -34,13 +35,14 @@ impl SeamCarver {
             .iter()
         {
             image_data.push(*d);
+            image_data_copy.push(*d);
         }
 
         let context = carver::ImageContext {
             width: width,
             height: height,
         };
-        let image_matrix = carver::get_image_pixel_matrix(context, image_data);
+        let image_matrix = carver::get_image_pixel_matrix(context, image_data_copy);
 
         SeamCarver {
             width: width,

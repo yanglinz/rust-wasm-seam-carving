@@ -342,6 +342,31 @@ pub fn get_resized_image_data(
     return data;
 }
 
+pub fn get_image_data_from_pixels(
+    context: ImageContext,
+    image_pixel_matrix: &mut Vec<ImagePixel>,
+) -> Vec<u8> {
+    let mut data = Vec::new();
+    for h in 0..context.height {
+        for w in 0..context.width {
+            let index = get_pixel_index(
+                context,
+                PixelPosition {
+                    x: w as u32,
+                    y: h as u32,
+                },
+            );
+            let pixel = image_pixel_matrix[index];
+            data.push(pixel.r);
+            data.push(pixel.g);
+            data.push(pixel.b);
+            data.push(pixel.a);
+        }
+    }
+
+    return data;
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -629,9 +654,8 @@ mod tests {
         ]);
 
         let expected_energy_map = vec![
-            141.42136, 264.57513, 316.22775, 253.9685, 120.41595, 
-            100.49876, 164.31677, 242.4871, 209.04546, 42.426407, 
-            148.78844, 231.64412, 305.55197, 261.2298, 80.0
+            141.42136, 264.57513, 316.22775, 253.9685, 120.41595, 100.49876, 164.31677, 242.4871,
+            209.04546, 42.426407, 148.78844, 231.64412, 305.55197, 261.2298, 80.0,
         ];
 
         #[rustfmt::skip]
@@ -643,8 +667,7 @@ mod tests {
 
         mark_pixel_position(context, &mut image_pixel_matrix);
         mark_energy_map(context, &mut image_pixel_matrix);
-        let energy_matrix: Vec<f32> =
-            image_pixel_matrix.iter().map(|p| p.energy).collect();
+        let energy_matrix: Vec<f32> = image_pixel_matrix.iter().map(|p| p.energy).collect();
         assert_eq!(energy_matrix, expected_energy_map);
 
         mark_seam_energy_map(context, &mut image_pixel_matrix);

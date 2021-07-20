@@ -60,9 +60,6 @@ impl SeamCarver {
     fn assert_invariant(&mut self) {}
 
     pub fn mark_seam(&mut self) {
-        log!("width: {}", self.width);
-        log!("height: {}", self.height);
-
         let context = carver::ImageContext {
             width: self.width,
             height: self.height,
@@ -74,16 +71,27 @@ impl SeamCarver {
     }
 
     pub fn delete_seam(&mut self) {
-        log!("delete_seam");
-
-        // Randomly delete things for now
         let context = carver::ImageContext {
             width: self.width,
             height: self.height,
         };
         carver::remove_seam(context, &mut self.image_matrix);
 
+        // Randomly delete things for now
         self.image_data.drain(0..self.width as usize); // Remove the first n elements
+
+        let new_context = carver::ImageContext {
+            width: self.width - 1,
+            height: self.height,
+        };
+        let new_image_data =
+            carver::get_image_data_from_pixels(new_context, &mut self.image_matrix);
+
+        self.image_data = new_image_data;
+
+        // log!("image_data: {}", self.image_data.len());
+        // log!("new_image_data: {}", new_image_data.len());
+
         self.width -= 1;
     }
 

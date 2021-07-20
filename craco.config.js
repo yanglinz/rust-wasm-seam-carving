@@ -18,7 +18,6 @@ module.exports = {
       webpackConfig.plugins = (webpackConfig.plugins || []).concat([
         new WasmPackPlugin({
           crateDirectory: path.resolve(__dirname, "src"),
-          extraArgs: "--no-typescript",
           outDir: path.resolve(__dirname, "src/pkg"),
         }),
       ]);

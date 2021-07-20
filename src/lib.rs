@@ -2,55 +2,66 @@ use wasm_bindgen::prelude::*;
 use wasm_bindgen::Clamped;
 use web_sys::{CanvasRenderingContext2d, ImageData};
 
-mod carver;
-
-#[wasm_bindgen]
-pub fn resize(
-    ctx: &CanvasRenderingContext2d,
-    ctx2: &CanvasRenderingContext2d,
-    width_current: u32,
-    height_current: u32,
-    width_target: u32,
-    height_target: u32,
-) -> Result<(), JsValue> {
-    let width = width_current;
-    let height = height_current;
-    let width_select = width_current as f64;
-    let height_select = height_current as f64;
-
-    let image_data_current = ctx.get_image_data(0.0, 0.0, width_select, height_select)?;
-    let mut data: Vec<u8> = vec![];
-    for d in image_data_current.data().iter() {
-        data.push(*d);
+macro_rules! log {
+    ( $( $t:tt )* ) => {
+        web_sys::console::log_1(&format!( $( $t )* ).into());
     }
-    let mut image_data = carver::get_resized_image_data(
-        data,
-        width_current,
-        height_current,
-        width_target,
-        height_target,
-    );
-    let data = ImageData::new_with_u8_clamped_array_and_sh(
-        Clamped(&mut image_data),
-        width_target,
-        height_target,
-    )?;
-
-    ctx2.put_image_data(&data, 0.0, 0.0)
 }
 
-pub fn resize_internal(
+#[wasm_bindgen]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ColorRange(u8);
+
+#[wasm_bindgen]
+pub struct SeamCarver {
+    pub width: u32,
+    pub height: u32,
     image_data: Vec<u8>,
-    width_current: u32,
-    height_current: u32,
-    width_target: u32,
-    height_target: u32,
-) -> Vec<u8> {
-    return carver::get_resized_image_data(
-        image_data,
-        width_current,
-        height_current,
-        width_target,
-        height_target,
-    );
+    // image_metadata
+}
+
+#[wasm_bindgen]
+impl SeamCarver {
+    pub fn new(ctx: &CanvasRenderingContext2d, width: u32, height: u32) -> SeamCarver {
+        // Find a more consice way to create the vector
+        let mut image_data: Vec<u8> = vec![];
+        for d in ctx
+            .get_image_data(0.0, 0.0, width as f64, height as f64)
+            .unwrap()
+            .data()
+            .iter()
+        {
+            image_data.push(*d);
+        }
+
+        SeamCarver {
+            width: width,
+            height: height,
+            image_data: image_data,
+        }
+    }
+
+    fn assert_invariant(&mut self) {}
+
+    pub fn mark_seam(&mut self) {
+        // Do nothing for now
+        log!("mark_seam")
+    }
+
+    pub fn delete_seam(&mut self) {
+        log!("delete_seam");
+
+        // Randomly delete things for now
+        self.image_data.drain(0..self.width as usize); // Remove the first n elements
+        self.width -= 1;
+    }
+
+    pub fn image_data_ptr(&self) -> *const u8 {
+        self.image_data.as_ptr()
+    }
+}
+
+#[wasm_bindgen]
+pub fn wasm_memory() -> JsValue {
+    wasm_bindgen::memory()
 }

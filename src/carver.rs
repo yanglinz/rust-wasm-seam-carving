@@ -4,7 +4,7 @@ use web_sys::ImageData;
 extern crate web_sys;
 
 #[derive(Copy, Clone)]
-struct ImageContext {
+pub struct ImageContext {
     width: u32,
     height: u32,
 }
@@ -23,7 +23,7 @@ enum PixelStatus {
 }
 
 #[derive(Copy, Clone)]
-struct ImagePixel {
+pub struct ImagePixel {
     // Color representation
     r: u8,
     g: u8,
@@ -105,7 +105,7 @@ fn get_neighbor_pixel(
 }
 
 // We can initialize the image "matrix" with some placeholder values.
-fn get_image_pixel_matrix(context: ImageContext, image_data: Vec<u8>) -> Vec<ImagePixel> {
+pub fn get_image_pixel_matrix(context: ImageContext, image_data: Vec<u8>) -> Vec<ImagePixel> {
     let w_matrix = context.width as usize;
     let h_matrix = context.height as usize;
     let placeholder = ImagePixel {

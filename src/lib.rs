@@ -2,6 +2,8 @@ use wasm_bindgen::prelude::*;
 use wasm_bindgen::Clamped;
 use web_sys::{CanvasRenderingContext2d, ImageData};
 
+mod carver;
+
 macro_rules! log {
     ( $( $t:tt )* ) => {
         web_sys::console::log_1(&format!( $( $t )* ).into());
@@ -17,7 +19,7 @@ pub struct SeamCarver {
     pub width: u32,
     pub height: u32,
     image_data: Vec<u8>,
-    // image_metadata
+    image_matrix: Vec<carver::ImagePixel>,
 }
 
 #[wasm_bindgen]
@@ -34,10 +36,17 @@ impl SeamCarver {
             image_data.push(*d);
         }
 
+        let context = carver::ImageContext {
+            width: width,
+            height: height,
+        };
+        let image_matrix = carver::get_image_pixel_matrix(context, image_data);
+
         SeamCarver {
             width: width,
             height: height,
             image_data: image_data,
+            image_matrix: image_matrix,
         }
     }
 

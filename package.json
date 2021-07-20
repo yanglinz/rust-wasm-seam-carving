@@ -36,7 +36,6 @@
     "postcss": "7",
     "react-scripts": "4.0.3",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat",
-    "wasm-output": "file:./pkg",
     "worker-loader": "^3.0.8"
   }
 }

@@ -146,7 +146,7 @@ pub fn get_image_pixel_matrix(context: ImageContext, image_data: Vec<u8>) -> Vec
     return matrix;
 }
 
-fn mark_pixel_position(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
+pub fn mark_pixel_position(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
     for (i, pixel) in image_pixel_matrix.iter_mut().enumerate() {
         let pos = get_pixel_position(context, i);
         pixel.position = pos;
@@ -182,7 +182,7 @@ fn get_energy(
 }
 
 // Mark the energy for every pixel in the image matrix.
-fn mark_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
+pub fn mark_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
     // TODO: Consider splitting the read/write portion of the matrix
     // to avoid having to clone a fairly large vector in each iteration.
     let pixel_matrix_clone = image_pixel_matrix.clone();
@@ -193,7 +193,7 @@ fn mark_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixe
     }
 }
 
-fn mark_seam_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
+pub fn mark_seam_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
     let w_matrix = context.width as usize;
     let h_matrix = context.height as usize;
 
@@ -226,7 +226,7 @@ fn mark_seam_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<Imag
     }
 }
 
-fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
+pub fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
     let w_matrix = context.width as usize;
     let h_matrix = context.height as usize;
 
@@ -284,7 +284,7 @@ fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
     }
 }
 
-fn remove_seam(_context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
+pub fn remove_seam(_context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
     image_pixel_matrix.retain(|p| p.status != PixelStatus::Seam);
 }
 

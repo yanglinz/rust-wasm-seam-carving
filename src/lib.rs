@@ -2,6 +2,9 @@ use wasm_bindgen::prelude::*;
 use wasm_bindgen::Clamped;
 use web_sys::{CanvasRenderingContext2d, ImageData};
 
+extern crate console_error_panic_hook;
+use std::panic;
+
 mod carver;
 
 macro_rules! log {
@@ -25,6 +28,8 @@ pub struct SeamCarver {
 #[wasm_bindgen]
 impl SeamCarver {
     pub fn new(ctx: &CanvasRenderingContext2d, width: u32, height: u32) -> SeamCarver {
+        panic::set_hook(Box::new(console_error_panic_hook::hook));
+
         // Find a more consice way to create the vector
         let mut image_data: Vec<u8> = vec![];
         let mut image_data_copy: Vec<u8> = vec![];
@@ -55,14 +60,29 @@ impl SeamCarver {
     fn assert_invariant(&mut self) {}
 
     pub fn mark_seam(&mut self) {
-        // Do nothing for now
-        log!("mark_seam")
+        log!("width: {}", self.width);
+        log!("height: {}", self.height);
+
+        let context = carver::ImageContext {
+            width: self.width,
+            height: self.height,
+        };
+        carver::mark_pixel_position(context, &mut self.image_matrix);
+        carver::mark_energy_map(context, &mut self.image_matrix);
+        carver::mark_seam_energy_map(context, &mut self.image_matrix);
+        carver::mark_seam(context, &mut self.image_matrix);
     }
 
     pub fn delete_seam(&mut self) {
         log!("delete_seam");
 
         // Randomly delete things for now
+        let context = carver::ImageContext {
+            width: self.width,
+            height: self.height,
+        };
+        carver::remove_seam(context, &mut self.image_matrix);
+
         self.image_data.drain(0..self.width as usize); // Remove the first n elements
         self.width -= 1;
     }

@@ -4,9 +4,9 @@ use web_sys::ImageData;
 extern crate web_sys;
 
 #[derive(Copy, Clone)]
-struct ImageContext {
-    width: u32,
-    height: u32,
+pub struct ImageContext {
+    pub width: u32,
+    pub height: u32,
 }
 
 // Zero-indexed representation of image pixel coordinates
@@ -23,7 +23,7 @@ enum PixelStatus {
 }
 
 #[derive(Copy, Clone)]
-struct ImagePixel {
+pub struct ImagePixel {
     // Color representation
     r: u8,
     g: u8,
@@ -105,7 +105,7 @@ fn get_neighbor_pixel(
 }
 
 // We can initialize the image "matrix" with some placeholder values.
-fn get_image_pixel_matrix(context: ImageContext, image_data: Vec<u8>) -> Vec<ImagePixel> {
+pub fn get_image_pixel_matrix(context: ImageContext, image_data: Vec<u8>) -> Vec<ImagePixel> {
     let w_matrix = context.width as usize;
     let h_matrix = context.height as usize;
     let placeholder = ImagePixel {
@@ -146,7 +146,7 @@ fn get_image_pixel_matrix(context: ImageContext, image_data: Vec<u8>) -> Vec<Ima
     return matrix;
 }
 
-fn mark_pixel_position(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
+pub fn mark_pixel_position(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
     for (i, pixel) in image_pixel_matrix.iter_mut().enumerate() {
         let pos = get_pixel_position(context, i);
         pixel.position = pos;
@@ -182,7 +182,7 @@ fn get_energy(
 }
 
 // Mark the energy for every pixel in the image matrix.
-fn mark_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
+pub fn mark_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
     // TODO: Consider splitting the read/write portion of the matrix
     // to avoid having to clone a fairly large vector in each iteration.
     let pixel_matrix_clone = image_pixel_matrix.clone();
@@ -193,7 +193,7 @@ fn mark_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixe
     }
 }
 
-fn mark_seam_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
+pub fn mark_seam_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
     let w_matrix = context.width as usize;
     let h_matrix = context.height as usize;
 
@@ -226,7 +226,7 @@ fn mark_seam_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<Imag
     }
 }
 
-fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
+pub fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
     let w_matrix = context.width as usize;
     let h_matrix = context.height as usize;
 
@@ -284,7 +284,7 @@ fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
     }
 }
 
-fn remove_seam(_context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
+pub fn remove_seam(_context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
     image_pixel_matrix.retain(|p| p.status != PixelStatus::Seam);
 }
 
@@ -332,6 +332,31 @@ pub fn get_resized_image_data(
                 },
             );
             let pixel = matrix[index];
+            data.push(pixel.r);
+            data.push(pixel.g);
+            data.push(pixel.b);
+            data.push(pixel.a);
+        }
+    }
+
+    return data;
+}
+
+pub fn get_image_data_from_pixels(
+    context: ImageContext,
+    image_pixel_matrix: &mut Vec<ImagePixel>,
+) -> Vec<u8> {
+    let mut data = Vec::new();
+    for h in 0..context.height {
+        for w in 0..context.width {
+            let index = get_pixel_index(
+                context,
+                PixelPosition {
+                    x: w as u32,
+                    y: h as u32,
+                },
+            );
+            let pixel = image_pixel_matrix[index];
             data.push(pixel.r);
             data.push(pixel.g);
             data.push(pixel.b);
@@ -629,9 +654,8 @@ mod tests {
         ]);
 
         let expected_energy_map = vec![
-            141.42136, 264.57513, 316.22775, 253.9685, 120.41595, 
-            100.49876, 164.31677, 242.4871, 209.04546, 42.426407, 
-            148.78844, 231.64412, 305.55197, 261.2298, 80.0
+            141.42136, 264.57513, 316.22775, 253.9685, 120.41595, 100.49876, 164.31677, 242.4871,
+            209.04546, 42.426407, 148.78844, 231.64412, 305.55197, 261.2298, 80.0,
         ];
 
         #[rustfmt::skip]
@@ -643,8 +667,7 @@ mod tests {
 
         mark_pixel_position(context, &mut image_pixel_matrix);
         mark_energy_map(context, &mut image_pixel_matrix);
-        let energy_matrix: Vec<f32> =
-            image_pixel_matrix.iter().map(|p| p.energy).collect();
+        let energy_matrix: Vec<f32> = image_pixel_matrix.iter().map(|p| p.energy).collect();
         assert_eq!(energy_matrix, expected_energy_map);
 
         mark_seam_energy_map(context, &mut image_pixel_matrix);

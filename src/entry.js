@@ -78,7 +78,7 @@ function App() {
       target.getContext("2d").putImageData(imageDataWrapper, 0, 0);
     }
 
-    let steps = 200;
+    let steps = 100;
     function incrementalResize() {
       if (steps <= 0) {
         return;

@@ -8,12 +8,26 @@ import Controls from "./components/Controls";
 
 import "./index.css";
 
-const initialState = { display: "SOURCE" };
+const initialState = {
+  display: "INITIALIZED",
+  sourceWidth: 0,
+  sourceHeight: 0,
+};
 
 function reducer(state, action) {
   switch (action.type) {
-    case "RESIZE":
-      return { display: "TARGET" };
+    case "SOURCE_IMAGE_LOADED": {
+      const { width, height } = action.payload;
+      return {
+        ...state,
+        display: "SOURCE",
+        sourceWidth: width,
+        sourceHeight: height,
+      };
+    }
+    case "RESIZE_INITIALIZED": {
+      return { ...state, display: "TARGET" };
+    }
     default:
       throw new Error("Unknown action type in reducer.");
   }
@@ -41,11 +55,14 @@ function App() {
         // prettier-ignore
 
         const imageData = ctx.getImageData(0, 0, source.width, source.height);
-        console.log(imageData);
+        dispatch({
+          type: "SOURCE_IMAGE_LOADED",
+          payload: { width: source.width, height: source.height },
+        });
       });
   }
 
-  function handleResize() {
+  function handleResize(resizedWidth) {
     const { source, target } = getCanvasElements();
 
     const carver = SeamCarver.new(
@@ -78,7 +95,7 @@ function App() {
       target.getContext("2d").putImageData(imageDataWrapper, 0, 0);
     }
 
-    let steps = 100;
+    let steps = source.width - resizedWidth;
     function incrementalResize() {
       if (steps <= 0) {
         return;
@@ -92,7 +109,7 @@ function App() {
 
     requestAnimationFrame(incrementalResize);
 
-    dispatch({ type: "RESIZE" });
+    dispatch({ type: "RESIZE_INITIALIZED" });
   }
 
   useEffect(loadImage, []);
@@ -101,12 +118,12 @@ function App() {
     <div className="App flex flex-col h-screen">
       <div className="flex-grow">
         <div className="flex items-center	justify-center h-full">
-          <ImageCanvas currentDisplay={state.display} />
+          <ImageCanvas globalState={state} />
         </div>
       </div>
 
       <div className="border-t border-gray-150 p-10 bg-white">
-        <Controls handleResize={handleResize} />
+        <Controls globalState={state} handleResize={handleResize} />
       </div>
     </div>
   );

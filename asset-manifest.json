@@ -2,19 +2,19 @@
   "files": {
     "main.js": "/content-aware-image-resizer/static/js/main.d0f2b5f8.chunk.js",
     "main.js.map": "/content-aware-image-resizer/static/js/main.d0f2b5f8.chunk.js.map",
-    "runtime-main.js": "/content-aware-image-resizer/static/js/runtime-main.f1742d49.js",
-    "runtime-main.js.map": "/content-aware-image-resizer/static/js/runtime-main.f1742d49.js.map",
-    "static/js/2.6b09685e.chunk.js": "/content-aware-image-resizer/static/js/2.6b09685e.chunk.js",
-    "static/js/2.6b09685e.chunk.js.map": "/content-aware-image-resizer/static/js/2.6b09685e.chunk.js.map",
-    "static/css/3.94ccce61.chunk.css": "/content-aware-image-resizer/static/css/3.94ccce61.chunk.css",
-    "static/js/3.337f3d75.chunk.js": "/content-aware-image-resizer/static/js/3.337f3d75.chunk.js",
-    "becd93ec0d71c3d1e95b.module.wasm": "/content-aware-image-resizer/becd93ec0d71c3d1e95b.module.wasm",
-    "static/js/3.337f3d75.chunk.js.map": "/content-aware-image-resizer/static/js/3.337f3d75.chunk.js.map",
+    "runtime-main.js": "/content-aware-image-resizer/static/js/runtime-main.f0da5d27.js",
+    "runtime-main.js.map": "/content-aware-image-resizer/static/js/runtime-main.f0da5d27.js.map",
+    "static/js/2.dd15db96.chunk.js": "/content-aware-image-resizer/static/js/2.dd15db96.chunk.js",
+    "static/js/2.dd15db96.chunk.js.map": "/content-aware-image-resizer/static/js/2.dd15db96.chunk.js.map",
+    "static/css/3.0766edf2.chunk.css": "/content-aware-image-resizer/static/css/3.0766edf2.chunk.css",
+    "static/js/3.7ebe7bca.chunk.js": "/content-aware-image-resizer/static/js/3.7ebe7bca.chunk.js",
+    "a29047e0dc4fce04f355.module.wasm": "/content-aware-image-resizer/a29047e0dc4fce04f355.module.wasm",
+    "static/js/3.7ebe7bca.chunk.js.map": "/content-aware-image-resizer/static/js/3.7ebe7bca.chunk.js.map",
     "index.html": "/content-aware-image-resizer/index.html",
-    "static/css/3.94ccce61.chunk.css.map": "/content-aware-image-resizer/static/css/3.94ccce61.chunk.css.map"
+    "static/css/3.0766edf2.chunk.css.map": "/content-aware-image-resizer/static/css/3.0766edf2.chunk.css.map"
   },
   "entrypoints": [
-    "static/js/runtime-main.f1742d49.js",
+    "static/js/runtime-main.f0da5d27.js",
     "static/js/main.d0f2b5f8.chunk.js"
   ]
 }

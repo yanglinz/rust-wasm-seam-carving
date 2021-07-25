@@ -41,18 +41,21 @@ function WidthSliderPlaceholder() {
 
 function Controls(props) {
   const { globalState, handleResize } = props;
-  const { display, sourceWidth } = globalState;
+
+  const { selectedImage } = globalState;
   const [resizedWidth, setResizedWidth] = useState(0);
 
   const resizeActionEnabled =
-    display === "SOURCE" && resizedWidth !== 0 && resizedWidth !== sourceWidth;
+    selectedImage.state === "SOURCE" &&
+    resizedWidth !== 0 &&
+    resizedWidth !== selectedImage.width;
   return (
     <div className="Controls">
       <div className="pb-3">
-        {display === "SOURCE" ? (
+        {selectedImage.state === "SOURCE" ? (
           <WidthSlider
             minWidth={20}
-            maxWidth={sourceWidth}
+            maxWidth={selectedImage.width}
             onChange={setResizedWidth}
           />
         ) : (

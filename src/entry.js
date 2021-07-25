@@ -1,4 +1,5 @@
 import React, { useReducer, useEffect } from "react";
+import produce from "immer";
 import ReactDOM from "react-dom";
 
 import { SeamCarver, wasm_memory as memory } from "./pkg";
@@ -9,28 +10,37 @@ import Controls from "./components/Controls";
 import "./index.css";
 
 const initialAppState = {
-  display: "INITIALIZED",
-  sourceWidth: 0,
-  sourceHeight: 0,
+  selectedImage: {
+    state: "INITIAL",
+    url: null,
+    width: 0,
+    height: 0,
+  },
+  control: {
+    state: "INITIAL",
+  },
+};
+
+const appStateModifiers = {
+  SOURCE_IMAGE_LOADED: function sourceImageLoaded(state, action) {
+    const { width, height } = action.payload;
+    state.selectedImage.state = "SOURCE";
+    state.selectedImage.width = width;
+    state.selectedImage.height = height;
+  },
+  RESIZE_INITIALIZED: function resizeInitialized(state, action) {
+    state.selectedImage.state = "TARGET";
+  },
 };
 
 function appStateReducer(state, action) {
-  switch (action.type) {
-    case "SOURCE_IMAGE_LOADED": {
-      const { width, height } = action.payload;
-      return {
-        ...state,
-        display: "SOURCE",
-        sourceWidth: width,
-        sourceHeight: height,
-      };
-    }
-    case "RESIZE_INITIALIZED": {
-      return { ...state, display: "TARGET" };
-    }
-    default:
-      throw new Error("Unknown action type in reducer.");
+  const modifer = appStateModifiers[action.type];
+  if (!modifer) {
+    throw new Error("Unknown action type in reducer.");
   }
+
+  const nextState = produce(state, (draftState) => modifer(draftState, action));
+  return nextState;
 }
 
 function App() {

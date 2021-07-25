@@ -5,9 +5,9 @@ export function getCanvasElements() {
 }
 
 function ImageCanvas(props) {
-  const { display } = props.globalState;
-  const originalClassNames = display === "SOURCE" ? "" : "hidden";
-  const targetClassNames = display === "TARGET" ? "" : "hidden";
+  const { selectedImage } = props.globalState;
+  const originalClassNames = selectedImage.state === "SOURCE" ? "" : "hidden";
+  const targetClassNames = selectedImage.state === "TARGET" ? "" : "hidden";
 
   return (
     <div className="border-8 border-gray-600 border-opacity-5">

@@ -44,7 +44,13 @@ function Dialog(props) {
   );
 }
 
-function ImageSelect() {
+function ImageSelect(props) {
+  const { globalState, handleImageSelect, handleClose } = props;
+
+  if (globalState.control.state !== "IMAGE_SELECT") {
+    return null;
+  }
+
   const demoImages = [
     "https://source.unsplash.com/yRjLihK35Yw/200x150",
     "https://source.unsplash.com/random/200x150",
@@ -68,6 +74,7 @@ function ImageSelect() {
             {demoImages.map((url) => (
               <img
                 className="inline-block h-20 w-20 rounded-full"
+                onClick={() => handleImageSelect(url)}
                 src={url}
               ></img>
             ))}
@@ -79,6 +86,7 @@ function ImageSelect() {
         <button
           type="button"
           className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+          onClick={handleClose}
         >
           Cancel
         </button>

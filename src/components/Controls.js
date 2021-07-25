@@ -40,7 +40,7 @@ function WidthSliderPlaceholder() {
 }
 
 function Controls(props) {
-  const { globalState, handleResize } = props;
+  const { globalState, handleResize, handleOpenImageSelect } = props;
 
   const { selectedImage } = globalState;
   const [resizedWidth, setResizedWidth] = useState(0);
@@ -74,7 +74,10 @@ function Controls(props) {
 
         <div className="px-1"></div>
 
-        <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded disabled:opacity-50">
+        <button
+          className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded disabled:opacity-50"
+          onClick={handleOpenImageSelect}
+        >
           Try Another Image
         </button>
       </div>

@@ -19,6 +19,7 @@ const initialAppState = {
   },
   control: {
     state: "INITIAL",
+    // state: "IMAGE_SELECT",
   },
 };
 
@@ -31,6 +32,12 @@ const appStateModifiers = {
   },
   RESIZE_INITIALIZED: function resizeInitialized(state, action) {
     state.selectedImage.state = "TARGET";
+  },
+  IMAGE_SELECT_OPENED: function imageSelectOpened(state, action) {
+    state.control.state = "IMAGE_SELECT";
+  },
+  IMAGE_SELECT_CLOSED: function imageSelectClosed(state, action) {
+    state.control.state = "INITIAL";
   },
 };
 
@@ -47,12 +54,13 @@ function appStateReducer(state, action) {
 function App() {
   const [state, dispatch] = useReducer(appStateReducer, initialAppState);
 
-  function loadImage() {
+  const DEMO_IMAGE = "https://source.unsplash.com/yRjLihK35Yw/500x250";
+
+  function loadImage(imageUrl) {
     const { source } = getCanvasElements();
-    const DEMO_IMAGE = "https://source.unsplash.com/yRjLihK35Yw/500x250";
 
     // TODO: Handle image loading failure
-    return fetch(DEMO_IMAGE)
+    return fetch(imageUrl)
       .then((r) => r.blob())
       .then((blob) => createImageBitmap(blob))
       .then((img) => {
@@ -123,7 +131,7 @@ function App() {
     dispatch({ type: "RESIZE_INITIALIZED" });
   }
 
-  useEffect(loadImage, []);
+  useEffect(() => loadImage(DEMO_IMAGE), []);
 
   return (
     <div className="App flex flex-col h-screen">
@@ -137,20 +145,19 @@ function App() {
         <Controls
           globalState={state}
           handleResize={handleResize}
-          handleOpenImageSelect={() => {
-            console.log("handleOpenImageSelect");
-          }}
+          handleOpenImageSelect={() =>
+            dispatch({ type: "IMAGE_SELECT_OPENED" })
+          }
         />
       </div>
 
       <ImageSelect
         globalState={state}
-        handleImageSelect={() => {
-          console.log("handleImageSelect");
+        handleImageSelect={(imageUrl) => {
+          loadImage(imageUrl);
+          dispatch({ type: "IMAGE_SELECT_CLOSED" });
         }}
-        handleClose={() => {
-          console.log("handleClose");
-        }}
+        handleClose={() => dispatch({ type: "IMAGE_SELECT_CLOSED" })}
       />
     </div>
   );

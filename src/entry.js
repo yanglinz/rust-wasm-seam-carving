@@ -4,6 +4,7 @@ import ReactDOM from "react-dom";
 
 import { SeamCarver, wasm_memory as memory } from "./pkg";
 import { onDocumentReady } from "./helpers/dom";
+import ImageSelect from "./components/ImageSelect";
 import ImageCanvas, { getCanvasElements } from "./components/ImageCanvas";
 import Controls from "./components/Controls";
 
@@ -135,6 +136,8 @@ function App() {
       <div className="border-t border-gray-150 p-10 bg-white">
         <Controls globalState={state} handleResize={handleResize} />
       </div>
+
+      <ImageSelect globalState={state} />
     </div>
   );
 }

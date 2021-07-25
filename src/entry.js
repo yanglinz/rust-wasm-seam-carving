@@ -8,13 +8,13 @@ import Controls from "./components/Controls";
 
 import "./index.css";
 
-const initialState = {
+const initialAppState = {
   display: "INITIALIZED",
   sourceWidth: 0,
   sourceHeight: 0,
 };
 
-function reducer(state, action) {
+function appStateReducer(state, action) {
   switch (action.type) {
     case "SOURCE_IMAGE_LOADED": {
       const { width, height } = action.payload;
@@ -34,7 +34,7 @@ function reducer(state, action) {
 }
 
 function App() {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(appStateReducer, initialAppState);
 
   function loadImage() {
     const { source } = getCanvasElements();

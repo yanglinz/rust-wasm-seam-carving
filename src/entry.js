@@ -134,10 +134,24 @@ function App() {
       </div>
 
       <div className="border-t border-gray-150 p-10 bg-white">
-        <Controls globalState={state} handleResize={handleResize} />
+        <Controls
+          globalState={state}
+          handleResize={handleResize}
+          handleOpenImageSelect={() => {
+            console.log("handleOpenImageSelect");
+          }}
+        />
       </div>
 
-      <ImageSelect globalState={state} />
+      <ImageSelect
+        globalState={state}
+        handleImageSelect={() => {
+          console.log("handleImageSelect");
+        }}
+        handleClose={() => {
+          console.log("handleClose");
+        }}
+      />
     </div>
   );
 }

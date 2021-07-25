@@ -46,8 +46,7 @@ function Dialog(props) {
 
 function ImageSelect() {
   const demoImages = [
-    "https://source.unsplash.com/random/200x150",
-    "https://source.unsplash.com/random/200x150",
+    "https://source.unsplash.com/yRjLihK35Yw/200x150",
     "https://source.unsplash.com/random/200x150",
     "https://source.unsplash.com/random/200x150",
     "https://source.unsplash.com/random/200x150",
@@ -60,14 +59,17 @@ function ImageSelect() {
   return (
     <Dialog>
       <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-        <div className="flex flex-col content-center">
+        <div className="flex flex-col content-center items-center">
           <h3 className="my-3 text-lg leading-6 font-medium text-gray-900">
             Select Image
           </h3>
 
-          <div className="overflow-hidden grid grid-cols-3 gap-1">
+          <div className="overflow-hidden grid grid-cols-4 gap-1">
             {demoImages.map((url) => (
-              <img className="inline-block h-20 w-20" src={url}></img>
+              <img
+                className="inline-block h-20 w-20 rounded-full"
+                src={url}
+              ></img>
             ))}
           </div>
         </div>

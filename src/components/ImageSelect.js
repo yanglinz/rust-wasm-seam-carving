@@ -51,16 +51,22 @@ function ImageSelect(props) {
     return null;
   }
 
-  const demoImages = [
-    "https://source.unsplash.com/yRjLihK35Yw/200x150",
-    "https://source.unsplash.com/random/200x150",
-    "https://source.unsplash.com/random/200x150",
-    "https://source.unsplash.com/random/200x150",
-    "https://source.unsplash.com/random/200x150",
-    "https://source.unsplash.com/random/200x150",
-    "https://source.unsplash.com/random/200x150",
-    "https://source.unsplash.com/random/200x150",
+  const unsplashIds = [
+    ["yRjLihK35Yw", "title"],
+    ["e-S-Pe2EmrE", "Birds in the sky"],
+    ["F6XKjhMNB14", "Waves on a beach"],
+    ["KGwK6n7rxSg", "Hot balloons"],
+    ["C9XgrB8hqBI", "Top down shot of beach"],
+    ["pVr6wvUneMk", "Desert landscape"],
+    ["Pn6iimgM-wo", "Light house at night"],
+    ["4Oi1756LtF4", "Castle"],
   ];
+
+  const images = unsplashIds.map(([unsplashId, alt]) => ({
+    alt,
+    url: `https://source.unsplash.com/${unsplashId}/1000x500`,
+    previewUrl: `https://source.unsplash.com/${unsplashId}/200x150`,
+  }));
 
   return (
     <Dialog>
@@ -71,11 +77,12 @@ function ImageSelect(props) {
           </h3>
 
           <div className="overflow-hidden grid grid-cols-4 gap-1">
-            {demoImages.map((url) => (
+            {images.map((i) => (
               <img
                 className="inline-block h-20 w-20 rounded-full"
-                onClick={() => handleImageSelect(url)}
-                src={url}
+                onClick={() => handleImageSelect(i.url)}
+                alt={i.alt}
+                src={i.previewUrl}
               ></img>
             ))}
           </div>

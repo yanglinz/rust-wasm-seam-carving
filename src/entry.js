@@ -19,7 +19,6 @@ const initialAppState = {
   },
   control: {
     state: "INITIAL",
-    // state: "IMAGE_SELECT",
   },
 };
 

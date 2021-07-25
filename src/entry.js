@@ -1,47 +1,66 @@
 import React, { useReducer, useEffect } from "react";
+import produce from "immer";
 import ReactDOM from "react-dom";
 
 import { SeamCarver, wasm_memory as memory } from "./pkg";
 import { onDocumentReady } from "./helpers/dom";
+import ImageSelect from "./components/ImageSelect";
 import ImageCanvas, { getCanvasElements } from "./components/ImageCanvas";
 import Controls from "./components/Controls";
 
 import "./index.css";
 
-const initialState = {
-  display: "INITIALIZED",
-  sourceWidth: 0,
-  sourceHeight: 0,
+const initialAppState = {
+  selectedImage: {
+    state: "INITIAL",
+    url: null,
+    width: 0,
+    height: 0,
+  },
+  control: {
+    state: "INITIAL",
+  },
 };
 
-function reducer(state, action) {
-  switch (action.type) {
-    case "SOURCE_IMAGE_LOADED": {
-      const { width, height } = action.payload;
-      return {
-        ...state,
-        display: "SOURCE",
-        sourceWidth: width,
-        sourceHeight: height,
-      };
-    }
-    case "RESIZE_INITIALIZED": {
-      return { ...state, display: "TARGET" };
-    }
-    default:
-      throw new Error("Unknown action type in reducer.");
+const appStateModifiers = {
+  SOURCE_IMAGE_LOADED: function sourceImageLoaded(state, action) {
+    const { width, height, url } = action.payload;
+    state.selectedImage.state = "SOURCE";
+    state.selectedImage.width = width;
+    state.selectedImage.height = height;
+    state.selectedImage.url = url;
+  },
+  RESIZE_INITIALIZED: function resizeInitialized(state, action) {
+    state.selectedImage.state = "TARGET";
+  },
+  IMAGE_SELECT_OPENED: function imageSelectOpened(state, action) {
+    state.control.state = "IMAGE_SELECT";
+  },
+  IMAGE_SELECT_CLOSED: function imageSelectClosed(state, action) {
+    state.control.state = "INITIAL";
+  },
+};
+
+function appStateReducer(state, action) {
+  const modifer = appStateModifiers[action.type];
+  if (!modifer) {
+    throw new Error("Unknown action type in reducer.");
   }
+
+  const nextState = produce(state, (draftState) => modifer(draftState, action));
+  return nextState;
 }
 
 function App() {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(appStateReducer, initialAppState);
 
-  function loadImage() {
+  const DEMO_IMAGE = "https://source.unsplash.com/yRjLihK35Yw/500x250";
+
+  function loadImage(imageUrl) {
     const { source } = getCanvasElements();
-    const DEMO_IMAGE = "https://source.unsplash.com/yRjLihK35Yw/500x250";
 
     // TODO: Handle image loading failure
-    return fetch(DEMO_IMAGE)
+    return fetch(imageUrl)
       .then((r) => r.blob())
       .then((blob) => createImageBitmap(blob))
       .then((img) => {
@@ -57,7 +76,11 @@ function App() {
         const imageData = ctx.getImageData(0, 0, source.width, source.height);
         dispatch({
           type: "SOURCE_IMAGE_LOADED",
-          payload: { width: source.width, height: source.height },
+          payload: {
+            width: source.width,
+            height: source.height,
+            url: imageUrl,
+          },
         });
       });
   }
@@ -112,7 +135,7 @@ function App() {
     dispatch({ type: "RESIZE_INITIALIZED" });
   }
 
-  useEffect(loadImage, []);
+  useEffect(() => loadImage(DEMO_IMAGE), []);
 
   return (
     <div className="App flex flex-col h-screen">
@@ -123,8 +146,23 @@ function App() {
       </div>
 
       <div className="border-t border-gray-150 p-10 bg-white">
-        <Controls globalState={state} handleResize={handleResize} />
+        <Controls
+          globalState={state}
+          handleResize={handleResize}
+          handleOpenImageSelect={() =>
+            dispatch({ type: "IMAGE_SELECT_OPENED" })
+          }
+        />
       </div>
+
+      <ImageSelect
+        globalState={state}
+        handleImageSelect={(imageUrl) => {
+          loadImage(imageUrl);
+          dispatch({ type: "IMAGE_SELECT_CLOSED" });
+        }}
+        handleClose={() => dispatch({ type: "IMAGE_SELECT_CLOSED" })}
+      />
     </div>
   );
 }

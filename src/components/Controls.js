@@ -40,19 +40,23 @@ function WidthSliderPlaceholder() {
 }
 
 function Controls(props) {
-  const { globalState, handleResize } = props;
-  const { display, sourceWidth } = globalState;
+  const { globalState, handleResize, handleOpenImageSelect } = props;
+
+  const { selectedImage } = globalState;
   const [resizedWidth, setResizedWidth] = useState(0);
 
   const resizeActionEnabled =
-    display === "SOURCE" && resizedWidth !== 0 && resizedWidth !== sourceWidth;
+    selectedImage.state === "SOURCE" &&
+    resizedWidth !== 0 &&
+    resizedWidth !== selectedImage.width;
   return (
     <div className="Controls">
       <div className="pb-3">
-        {display === "SOURCE" ? (
+        {selectedImage.state === "SOURCE" ? (
           <WidthSlider
+            key={selectedImage.url}
             minWidth={20}
-            maxWidth={sourceWidth}
+            maxWidth={selectedImage.width}
             onChange={setResizedWidth}
           />
         ) : (
@@ -60,13 +64,24 @@ function Controls(props) {
         )}
       </div>
 
-      <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
-        disabled={!resizeActionEnabled}
-        onClick={() => handleResize(resizedWidth)}
-      >
-        Resize Image
-      </button>
+      <div className="flex">
+        <button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
+          disabled={!resizeActionEnabled}
+          onClick={() => handleResize(resizedWidth)}
+        >
+          Resize Image
+        </button>
+
+        <div className="px-1"></div>
+
+        <button
+          className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded disabled:opacity-50"
+          onClick={handleOpenImageSelect}
+        >
+          Try Another Image
+        </button>
+      </div>
     </div>
   );
 }

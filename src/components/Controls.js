@@ -60,13 +60,21 @@ function Controls(props) {
         )}
       </div>
 
-      <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
-        disabled={!resizeActionEnabled}
-        onClick={() => handleResize(resizedWidth)}
-      >
-        Resize Image
-      </button>
+      <div className="flex">
+        <button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
+          disabled={!resizeActionEnabled}
+          onClick={() => handleResize(resizedWidth)}
+        >
+          Resize Image
+        </button>
+
+        <div className="px-1"></div>
+
+        <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded disabled:opacity-50">
+          Try Another Image
+        </button>
+      </div>
     </div>
   );
 }

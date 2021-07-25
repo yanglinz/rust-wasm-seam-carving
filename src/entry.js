@@ -25,10 +25,11 @@ const initialAppState = {
 
 const appStateModifiers = {
   SOURCE_IMAGE_LOADED: function sourceImageLoaded(state, action) {
-    const { width, height } = action.payload;
+    const { width, height, url } = action.payload;
     state.selectedImage.state = "SOURCE";
     state.selectedImage.width = width;
     state.selectedImage.height = height;
+    state.selectedImage.url = url;
   },
   RESIZE_INITIALIZED: function resizeInitialized(state, action) {
     state.selectedImage.state = "TARGET";
@@ -76,7 +77,11 @@ function App() {
         const imageData = ctx.getImageData(0, 0, source.width, source.height);
         dispatch({
           type: "SOURCE_IMAGE_LOADED",
-          payload: { width: source.width, height: source.height },
+          payload: {
+            width: source.width,
+            height: source.height,
+            url: imageUrl,
+          },
         });
       });
   }

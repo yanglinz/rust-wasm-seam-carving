@@ -54,6 +54,7 @@ function Controls(props) {
       <div className="pb-3">
         {selectedImage.state === "SOURCE" ? (
           <WidthSlider
+            key={selectedImage.url}
             minWidth={20}
             maxWidth={selectedImage.width}
             onChange={setResizedWidth}

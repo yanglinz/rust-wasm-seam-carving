@@ -1,6 +1,5 @@
 use wasm_bindgen::prelude::*;
-use wasm_bindgen::Clamped;
-use web_sys::{CanvasRenderingContext2d, ImageData};
+use web_sys::{CanvasRenderingContext2d};
 
 extern crate console_error_panic_hook;
 use std::panic;

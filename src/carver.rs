@@ -1,6 +1,3 @@
-use wasm_bindgen::Clamped;
-use web_sys::ImageData;
-
 extern crate web_sys;
 
 #[derive(Copy, Clone)]

@@ -180,13 +180,25 @@ fn get_energy(
 
 // Mark the energy for every pixel in the image matrix.
 pub fn mark_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
-    // TODO: Consider splitting the read/write portion of the matrix
-    // to avoid having to clone a fairly large vector in each iteration.
-    let pixel_matrix_clone = image_pixel_matrix.clone();
-    for (i, pixel) in image_pixel_matrix.iter_mut().enumerate() {
-        let left = get_neighbor_pixel(context, &pixel_matrix_clone, i, -1, 0);
-        let right = get_neighbor_pixel(context, &pixel_matrix_clone, i, 1, 0);
-        pixel.energy = get_energy(pixel.clone(), left, right);
+    let w_matrix = context.width as usize;
+    let h_matrix = context.height as usize;
+
+    for y in 0..h_matrix {
+        for x in 0..w_matrix {
+            let index = get_pixel_index(
+                context,
+                PixelPosition {
+                    x: x as u32,
+                    y: y as u32,
+                },
+            );
+
+            let left = get_neighbor_pixel(context, image_pixel_matrix, index, -1, 0);
+            let right = get_neighbor_pixel(context, image_pixel_matrix, index, 1, 0);
+            
+            let pixel = image_pixel_matrix[index];
+            image_pixel_matrix[index].energy = get_energy(pixel, left, right);
+        }
     }
 }
 

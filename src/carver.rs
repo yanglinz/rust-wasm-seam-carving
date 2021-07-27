@@ -195,7 +195,7 @@ pub fn mark_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<Image
 
             let left = get_neighbor_pixel(context, image_pixel_matrix, index, -1, 0);
             let right = get_neighbor_pixel(context, image_pixel_matrix, index, 1, 0);
-            
+
             let pixel = image_pixel_matrix[index];
             image_pixel_matrix[index].energy = get_energy(pixel, left, right);
         }
@@ -297,60 +297,6 @@ pub fn remove_seam(_context: ImageContext, image_pixel_matrix: &mut Vec<ImagePix
     image_pixel_matrix.retain(|p| p.status != PixelStatus::Seam);
 }
 
-pub fn get_resized_image_data(
-    image_data: Vec<u8>,
-    width_current: u32,
-    height_current: u32,
-    width_target: u32,
-    height_target: u32,
-) -> Vec<u8> {
-    let context = ImageContext {
-        width: width_current,
-        height: height_current,
-    };
-
-    let mut matrix = get_image_pixel_matrix(context, image_data);
-    let steps = width_current - width_target;
-    for s in 0..steps {
-        let context = ImageContext {
-            width: width_current - s,
-            height: height_current,
-        };
-
-        // web_sys::console::log_1(&format!("r, g, b, a: {} {} {} {}", pixel.r, pixel.g, pixel.b, pixel.a).into());
-
-        mark_pixel_position(context, &mut matrix);
-        mark_energy_map(context, &mut matrix);
-        mark_seam_energy_map(context, &mut matrix);
-        mark_seam(context, &mut matrix);
-        remove_seam(context, &mut matrix);
-    }
-
-    let context = ImageContext {
-        width: width_target,
-        height: height_target,
-    };
-    let mut data = Vec::new();
-    for h in 0..height_target {
-        for w in 0..width_target {
-            let index = get_pixel_index(
-                context,
-                PixelPosition {
-                    x: w as u32,
-                    y: h as u32,
-                },
-            );
-            let pixel = matrix[index];
-            data.push(pixel.r);
-            data.push(pixel.g);
-            data.push(pixel.b);
-            data.push(pixel.a);
-        }
-    }
-
-    return data;
-}
-
 pub fn get_image_data_from_pixels(
     context: ImageContext,
     image_pixel_matrix: &mut Vec<ImagePixel>,
@@ -366,10 +312,17 @@ pub fn get_image_data_from_pixels(
                 },
             );
             let pixel = image_pixel_matrix[index];
-            data.push(pixel.r);
-            data.push(pixel.g);
-            data.push(pixel.b);
-            data.push(pixel.a);
+            if pixel.status == PixelStatus::Seam {
+                data.push(255);
+                data.push(0);
+                data.push(0);
+                data.push(255);
+            } else {
+                data.push(pixel.r);
+                data.push(pixel.g);
+                data.push(pixel.b);
+                data.push(pixel.a);
+            }
         }
     }
 
@@ -639,8 +592,8 @@ mod tests {
 
         #[rustfmt::skip]
         let expected_energy = vec![
-            141.42136, 264.57513, 223.6068, 
-            141.42136, 244.94897, 200.0, 
+            141.42136, 264.57513, 223.6068,
+            141.42136, 244.94897, 200.0,
             141.42136, 244.94897, 200.0
         ];
         mark_energy_map(context, &mut image_pixel_matrix);
@@ -669,8 +622,8 @@ mod tests {
 
         #[rustfmt::skip]
         let expected_seam_energies = vec![
-            141.42136, 264.57513, 316.22775, 253.9685, 120.41595, 
-            241.9201, 305.73813, 496.45563, 329.4614, 162.84235, 
+            141.42136, 264.57513, 316.22775, 253.9685, 120.41595,
+            241.9201, 305.73813, 496.45563, 329.4614, 162.84235,
             390.70856, 473.5642, 611.2901, 424.07214, 242.84235
         ];
 
@@ -716,10 +669,10 @@ mod tests {
 
         #[rustfmt::skip]
         let expected_seam_energies = vec![
-            69.282036, 97.97959, 97.97959, 97.97959, 69.282036, 69.282036, 97.97959, 97.97959, 97.97959, 69.282036, 
-            138.56407, 167.26163, 195.95918, 167.26163, 138.56407, 138.56407, 167.26163, 195.95918, 167.26163, 138.56407, 
-            207.8461, 236.54367, 265.2412, 236.54367, 207.8461, 207.8461, 236.54367, 265.2412, 236.54367, 207.8461, 
-            277.12814, 305.82568, 334.52325, 305.82568, 277.12814, 277.12814, 305.82568, 334.52325, 305.82568, 277.12814, 
+            69.282036, 97.97959, 97.97959, 97.97959, 69.282036, 69.282036, 97.97959, 97.97959, 97.97959, 69.282036,
+            138.56407, 167.26163, 195.95918, 167.26163, 138.56407, 138.56407, 167.26163, 195.95918, 167.26163, 138.56407,
+            207.8461, 236.54367, 265.2412, 236.54367, 207.8461, 207.8461, 236.54367, 265.2412, 236.54367, 207.8461,
+            277.12814, 305.82568, 334.52325, 305.82568, 277.12814, 277.12814, 305.82568, 334.52325, 305.82568, 277.12814,
             346.4102, 375.10773, 403.80527, 375.10773, 346.4102, 346.4102, 375.10773, 403.80527, 375.10773, 346.4102
         ];
 
@@ -734,11 +687,11 @@ mod tests {
 
         #[rustfmt::skip]
         let expected_seam = vec![
-            true, false, false, false, false, false, false, false, false, false, 
-            true, false, false, false, false, false, false, false, false, false, 
-            true, false, false, false, false, false, false, false, false, false, 
-            true, false, false, false, false, false, false, false, false, false, 
-            true, false, false, false, false, false, false, false, false, false 
+            true, false, false, false, false, false, false, false, false, false,
+            true, false, false, false, false, false, false, false, false, false,
+            true, false, false, false, false, false, false, false, false, false,
+            true, false, false, false, false, false, false, false, false, false,
+            true, false, false, false, false, false, false, false, false, false
         ];
         let seam_matrix: Vec<bool> = image_pixel_matrix
             .iter()

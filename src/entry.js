@@ -94,11 +94,7 @@ function App() {
       source.height
     );
 
-    function resize1px() {
-      // Modify the image
-      carver.mark_seam();
-      carver.delete_seam();
-
+    function drawCurrent() {
       // Get the image data
       const imageDataPtr = carver.image_data_ptr();
       const imageData = new Uint8ClampedArray(
@@ -124,10 +120,16 @@ function App() {
         return;
       }
 
-      resize1px();
-      steps -= 1;
+      carver.mark_seam();
+      drawCurrent();
 
-      requestAnimationFrame(incrementalResize);
+      requestAnimationFrame(() => {
+        carver.delete_seam();
+        drawCurrent();
+        steps -= 1;
+
+        requestAnimationFrame(incrementalResize);
+      });
     }
 
     requestAnimationFrame(incrementalResize);

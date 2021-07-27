@@ -195,7 +195,7 @@ pub fn mark_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<Image
 
             let left = get_neighbor_pixel(context, image_pixel_matrix, index, -1, 0);
             let right = get_neighbor_pixel(context, image_pixel_matrix, index, 1, 0);
-            
+
             let pixel = image_pixel_matrix[index];
             image_pixel_matrix[index].energy = get_energy(pixel, left, right);
         }
@@ -312,10 +312,17 @@ pub fn get_image_data_from_pixels(
                 },
             );
             let pixel = image_pixel_matrix[index];
-            data.push(pixel.r);
-            data.push(pixel.g);
-            data.push(pixel.b);
-            data.push(pixel.a);
+            if pixel.status == PixelStatus::Seam {
+                data.push(255);
+                data.push(0);
+                data.push(0);
+                data.push(255);
+            } else {
+                data.push(pixel.r);
+                data.push(pixel.g);
+                data.push(pixel.b);
+                data.push(pixel.a);
+            }
         }
     }
 
@@ -585,8 +592,8 @@ mod tests {
 
         #[rustfmt::skip]
         let expected_energy = vec![
-            141.42136, 264.57513, 223.6068, 
-            141.42136, 244.94897, 200.0, 
+            141.42136, 264.57513, 223.6068,
+            141.42136, 244.94897, 200.0,
             141.42136, 244.94897, 200.0
         ];
         mark_energy_map(context, &mut image_pixel_matrix);
@@ -615,8 +622,8 @@ mod tests {
 
         #[rustfmt::skip]
         let expected_seam_energies = vec![
-            141.42136, 264.57513, 316.22775, 253.9685, 120.41595, 
-            241.9201, 305.73813, 496.45563, 329.4614, 162.84235, 
+            141.42136, 264.57513, 316.22775, 253.9685, 120.41595,
+            241.9201, 305.73813, 496.45563, 329.4614, 162.84235,
             390.70856, 473.5642, 611.2901, 424.07214, 242.84235
         ];
 
@@ -662,10 +669,10 @@ mod tests {
 
         #[rustfmt::skip]
         let expected_seam_energies = vec![
-            69.282036, 97.97959, 97.97959, 97.97959, 69.282036, 69.282036, 97.97959, 97.97959, 97.97959, 69.282036, 
-            138.56407, 167.26163, 195.95918, 167.26163, 138.56407, 138.56407, 167.26163, 195.95918, 167.26163, 138.56407, 
-            207.8461, 236.54367, 265.2412, 236.54367, 207.8461, 207.8461, 236.54367, 265.2412, 236.54367, 207.8461, 
-            277.12814, 305.82568, 334.52325, 305.82568, 277.12814, 277.12814, 305.82568, 334.52325, 305.82568, 277.12814, 
+            69.282036, 97.97959, 97.97959, 97.97959, 69.282036, 69.282036, 97.97959, 97.97959, 97.97959, 69.282036,
+            138.56407, 167.26163, 195.95918, 167.26163, 138.56407, 138.56407, 167.26163, 195.95918, 167.26163, 138.56407,
+            207.8461, 236.54367, 265.2412, 236.54367, 207.8461, 207.8461, 236.54367, 265.2412, 236.54367, 207.8461,
+            277.12814, 305.82568, 334.52325, 305.82568, 277.12814, 277.12814, 305.82568, 334.52325, 305.82568, 277.12814,
             346.4102, 375.10773, 403.80527, 375.10773, 346.4102, 346.4102, 375.10773, 403.80527, 375.10773, 346.4102
         ];
 
@@ -680,11 +687,11 @@ mod tests {
 
         #[rustfmt::skip]
         let expected_seam = vec![
-            true, false, false, false, false, false, false, false, false, false, 
-            true, false, false, false, false, false, false, false, false, false, 
-            true, false, false, false, false, false, false, false, false, false, 
-            true, false, false, false, false, false, false, false, false, false, 
-            true, false, false, false, false, false, false, false, false, false 
+            true, false, false, false, false, false, false, false, false, false,
+            true, false, false, false, false, false, false, false, false, false,
+            true, false, false, false, false, false, false, false, false, false,
+            true, false, false, false, false, false, false, false, false, false,
+            true, false, false, false, false, false, false, false, false, false
         ];
         let seam_matrix: Vec<bool> = image_pixel_matrix
             .iter()

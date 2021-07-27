@@ -56,8 +56,6 @@ impl SeamCarver {
         }
     }
 
-    fn assert_invariant(&mut self) {}
-
     pub fn mark_seam(&mut self) {
         let context = carver::ImageContext {
             width: self.width,
@@ -67,6 +65,8 @@ impl SeamCarver {
         carver::mark_energy_map(context, &mut self.image_matrix);
         carver::mark_seam_energy_map(context, &mut self.image_matrix);
         carver::mark_seam(context, &mut self.image_matrix);
+
+        self.image_data = carver::get_image_data_from_pixels(context, &mut self.image_matrix);
     }
 
     pub fn delete_seam(&mut self) {

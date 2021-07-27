@@ -1,5 +1,5 @@
 use wasm_bindgen::prelude::*;
-use web_sys::{CanvasRenderingContext2d};
+use web_sys::CanvasRenderingContext2d;
 
 extern crate console_error_panic_hook;
 use std::panic;
@@ -70,27 +70,21 @@ impl SeamCarver {
     }
 
     pub fn delete_seam(&mut self) {
-        let context = carver::ImageContext {
-            width: self.width,
-            height: self.height,
-        };
-        carver::remove_seam(context, &mut self.image_matrix);
+        carver::remove_seam(
+            carver::ImageContext {
+                width: self.width,
+                height: self.height,
+            },
+            &mut self.image_matrix,
+        );
 
-        // Randomly delete things for now
-        self.image_data.drain(0..self.width as usize); // Remove the first n elements
-
-        let new_context = carver::ImageContext {
-            width: self.width - 1,
-            height: self.height,
-        };
-        let new_image_data =
-            carver::get_image_data_from_pixels(new_context, &mut self.image_matrix);
-
-        self.image_data = new_image_data;
-
-        // log!("image_data: {}", self.image_data.len());
-        // log!("new_image_data: {}", new_image_data.len());
-
+        self.image_data = carver::get_image_data_from_pixels(
+            carver::ImageContext {
+                width: self.width - 1,
+                height: self.height,
+            },
+            &mut self.image_matrix,
+        );
         self.width -= 1;
     }
 

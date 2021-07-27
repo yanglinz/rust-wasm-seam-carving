@@ -297,60 +297,6 @@ pub fn remove_seam(_context: ImageContext, image_pixel_matrix: &mut Vec<ImagePix
     image_pixel_matrix.retain(|p| p.status != PixelStatus::Seam);
 }
 
-pub fn get_resized_image_data(
-    image_data: Vec<u8>,
-    width_current: u32,
-    height_current: u32,
-    width_target: u32,
-    height_target: u32,
-) -> Vec<u8> {
-    let context = ImageContext {
-        width: width_current,
-        height: height_current,
-    };
-
-    let mut matrix = get_image_pixel_matrix(context, image_data);
-    let steps = width_current - width_target;
-    for s in 0..steps {
-        let context = ImageContext {
-            width: width_current - s,
-            height: height_current,
-        };
-
-        // web_sys::console::log_1(&format!("r, g, b, a: {} {} {} {}", pixel.r, pixel.g, pixel.b, pixel.a).into());
-
-        mark_pixel_position(context, &mut matrix);
-        mark_energy_map(context, &mut matrix);
-        mark_seam_energy_map(context, &mut matrix);
-        mark_seam(context, &mut matrix);
-        remove_seam(context, &mut matrix);
-    }
-
-    let context = ImageContext {
-        width: width_target,
-        height: height_target,
-    };
-    let mut data = Vec::new();
-    for h in 0..height_target {
-        for w in 0..width_target {
-            let index = get_pixel_index(
-                context,
-                PixelPosition {
-                    x: w as u32,
-                    y: h as u32,
-                },
-            );
-            let pixel = matrix[index];
-            data.push(pixel.r);
-            data.push(pixel.g);
-            data.push(pixel.b);
-            data.push(pixel.a);
-        }
-    }
-
-    return data;
-}
-
 pub fn get_image_data_from_pixels(
     context: ImageContext,
     image_pixel_matrix: &mut Vec<ImagePixel>,

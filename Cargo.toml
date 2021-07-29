@@ -1,11 +1,11 @@
 [package]
-name = "seam_carver"
+name = "seam_carving"
 version = "0.1.0"
 authors = ["Yanglin Zhao <yz1876@gmail.com>"]
 edition = "2018"
 
 [lib]
-name = "seam_carver"
+name = "seam_carving"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]

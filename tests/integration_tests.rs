@@ -1,4 +1,4 @@
-use seam_carver;
+use seam_carving;
 
 mod fixture;
 

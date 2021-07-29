@@ -1,5 +1,5 @@
 {
-  "name": "content-aware-image-resizer",
+  "name": "rust-wasm-seam-carving",
   "version": "0.0.0",
   "browserslist": {
     "production": [

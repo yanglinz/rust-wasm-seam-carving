@@ -1,40 +1,38 @@
 import { useState, useEffect } from "react";
 
 function WidthSlider(props) {
-  const { minWidth, maxWidth, onChange } = props;
+  const { minWidth, maxWidth, disabled, onChange } = props;
   const [width, setWidth] = useState(maxWidth);
-  return (
-    <div className="flex">
-      <input
-        id="resize"
-        name="resize"
-        type="range"
-        className="w-80 mr-3"
-        min={minWidth}
-        max={maxWidth}
-        value={width}
-        onChange={(e) => {
-          const w = parseInt(e.target.value);
-          setWidth(w);
-          onChange(w);
-        }}
-      />
 
-      <label for="resize">{width}px</label>
-    </div>
-  );
-}
+  let sliderProps = { disabled: true };
+  if (!disabled) {
+    sliderProps = {
+      min: minWidth,
+      max: maxWidth,
+      value: width,
+      onChange: (e) => {
+        const w = parseInt(e.target.value);
+        setWidth(w);
+        onChange(w);
+      },
+    };
+  }
 
-function WidthSliderPlaceholder() {
   return (
-    <div className="flex">
-      <input
-        id="resize"
-        name="resize"
-        type="range"
-        className="w-80 mr-3"
-        disabled
-      />
+    <div className="flex justify-center">
+      <div className="flex w-8/12 align-center">
+        <input
+          id="resize"
+          name="resize"
+          type="range"
+          className="flex-grow"
+          {...sliderProps}
+        />
+
+        <label className="font-mono w-20 text-right text-gray-700" for="resize">
+          {disabled ? 0 : width}px
+        </label>
+      </div>
     </div>
   );
 }
@@ -52,35 +50,34 @@ function Controls(props) {
   return (
     <div className="Controls">
       <div className="pb-3">
-        {selectedImage.state === "SOURCE" ? (
-          <WidthSlider
-            key={selectedImage.url}
-            minWidth={20}
-            maxWidth={selectedImage.width}
-            onChange={setResizedWidth}
-          />
-        ) : (
-          <WidthSliderPlaceholder />
-        )}
+        <WidthSlider
+          key={selectedImage.url}
+          disabled={selectedImage.state !== "SOURCE"}
+          minWidth={20}
+          maxWidth={selectedImage.width}
+          onChange={setResizedWidth}
+        />
       </div>
 
-      <div className="flex">
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
-          disabled={!resizeActionEnabled}
-          onClick={() => handleResize(resizedWidth)}
-        >
-          Resize Image
-        </button>
+      <div className="flex justify-center">
+        <div className="flex">
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
+            disabled={!resizeActionEnabled}
+            onClick={() => handleResize(resizedWidth)}
+          >
+            Resize Image
+          </button>
 
-        <div className="px-1"></div>
+          <div className="px-1"></div>
 
-        <button
-          className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded disabled:opacity-50"
-          onClick={handleOpenImageSelect}
-        >
-          Try Another Image
-        </button>
+          <button
+            className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded disabled:opacity-50"
+            onClick={handleOpenImageSelect}
+          >
+            Try Another Image
+          </button>
+        </div>
       </div>
     </div>
   );

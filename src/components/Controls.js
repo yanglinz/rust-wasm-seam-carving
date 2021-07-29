@@ -22,7 +22,7 @@ function WidthSlider(props) {
 
   return (
     <div className="flex justify-center">
-      <div className="flex w-11/12 sm:w-8/12 align-center">
+      <div className="align-center flex w-11/12 sm:w-8/12">
         <input
           id="resize"
           name="resize"
@@ -31,7 +31,7 @@ function WidthSlider(props) {
           {...sliderProps}
         />
 
-        <label className="font-mono w-20 text-right text-gray-700" for="resize">
+        <label className="w-20 text-right text-gray-700 font-mono" for="resize">
           {disabled ? 0 : width}px
         </label>
       </div>

@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+
+import Button from "./Button";
 
 function WidthSlider(props) {
   const { minWidth, maxWidth, disabled, onChange } = props;
@@ -20,7 +22,7 @@ function WidthSlider(props) {
 
   return (
     <div className="flex justify-center">
-      <div className="flex w-8/12 align-center">
+      <div className="flex w-11/12 sm:w-8/12 align-center">
         <input
           id="resize"
           name="resize"
@@ -61,22 +63,19 @@ function Controls(props) {
 
       <div className="flex justify-center">
         <div className="flex">
-          <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
+          <Button
+            intent="PRIMARY"
             disabled={!resizeActionEnabled}
             onClick={() => handleResize(resizedWidth)}
           >
             Resize Image
-          </button>
+          </Button>
 
           <div className="px-1"></div>
 
-          <button
-            className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded disabled:opacity-50"
-            onClick={handleOpenImageSelect}
-          >
+          <Button intent="SECONDARY" onClick={handleOpenImageSelect}>
             Try Another Image
-          </button>
+          </Button>
         </div>
       </div>
     </div>

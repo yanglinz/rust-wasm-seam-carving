@@ -23,7 +23,7 @@ function Dialog(props) {
         role="dialog"
         aria-modal="true"
       >
-        <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div className="flex items-end justify-center pb-20 pt-4 px-4 min-h-screen text-center sm:block sm:p-0">
           <div
             className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
             aria-hidden="true"
@@ -36,7 +36,7 @@ function Dialog(props) {
             &#8203;
           </span>
 
-          <div className="inline-block align-bottom bg-white rounded-sm text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+          <div className="inline-block align-bottom text-left bg-white rounded-sm shadow-xl overflow-hidden transform transition-all sm:align-middle sm:my-8 sm:w-full sm:max-w-lg">
             {props.children}
           </div>
         </div>
@@ -71,16 +71,16 @@ function ImageSelect(props) {
 
   return (
     <Dialog>
-      <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+      <div className="pb-4 pt-5 px-4 bg-white sm:p-6 sm:pb-4">
         <div className="flex flex-col content-center items-center">
-          <h3 className="my-3 text-lg leading-6 font-medium text-gray-900">
+          <h3 className="my-3 text-gray-900 text-lg font-medium leading-6">
             Select Image
           </h3>
 
-          <div className="overflow-hidden grid grid-cols-4 gap-1">
+          <div className="grid gap-1 grid-cols-4 overflow-hidden">
             {images.map((i) => (
               <img
-                className="inline-block h-20 w-20 rounded-full"
+                className="inline-block w-20 h-20 rounded-full"
                 onClick={() => handleImageSelect(i.url)}
                 alt={i.alt}
                 src={i.previewUrl}
@@ -90,7 +90,7 @@ function ImageSelect(props) {
         </div>
       </div>
 
-      <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+      <div className="px-4 py-3 bg-gray-50 sm:flex sm:flex-row-reverse sm:px-6">
         <Button intent="SECONDARY" onClick={handleClose}>
           Cancel
         </Button>

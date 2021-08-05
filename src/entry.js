@@ -13,7 +13,6 @@ import "./index.css";
 const initialAppState = {
   selectedImage: {
     state: "INITIAL",
-    url: null,
     width: 0,
     height: 0,
   },
@@ -23,7 +22,7 @@ const initialAppState = {
 };
 
 const appStateModifiers = {
-  SOURCE_IMAGE_LOADED: function sourceImageLoaded(state, action) {
+  IMAGE_LOADED: function imageLoaded(state, action) {
     const { width, height, url } = action.payload;
     state.selectedImage.state = "SOURCE";
     state.selectedImage.width = width;
@@ -51,8 +50,6 @@ function appStateReducer(state, action) {
 
 function canvasLoadImage(dispatch, { image }) {
   const { source } = getCanvasElements();
-
-  // TODO: Handle high DPI screens / scale down heuristics
   source.width = image.width;
   source.height = image.height;
 
@@ -63,26 +60,33 @@ function canvasLoadImage(dispatch, { image }) {
 }
 
 function canvasLoadExternalImage(dispatch, { imageUrl }) {
-  const { source } = getCanvasElements();
-
   return fetch(imageUrl)
     .then((r) => r.blob())
     .then((blob) => createImageBitmap(blob))
-    .then((image) => canvasLoadImage(dispatch, { image }))
-    .then(() => {
+    .then((image) => {
+      canvasLoadImage(dispatch, { image });
+      return image;
+    })
+    .then((image) => {
       dispatch({
-        type: "SOURCE_IMAGE_LOADED",
-        payload: {
-          width: source.width,
-          height: source.height,
-          url: imageUrl,
-        },
+        type: "IMAGE_LOADED",
+        payload: { width: image.width, height: image.height, url: imageUrl },
       });
     });
 }
 
-function canvasUploadedImage(dispatch) {
-  // TODO
+function canvasUploadedImage(dispatch, { inputEvent }) {
+  const file = inputEvent.target.files[0];
+  const image = document.createElement("img");
+  image.src = window.URL.createObjectURL(file);
+
+  image.onload = function () {
+    canvasLoadImage(dispatch, { image });
+    dispatch({
+      type: "IMAGE_LOADED",
+      payload: { width: image.width, height: image.height, url: image.src },
+    });
+  };
 }
 
 function canvasResizeImage(dispatch, { resizedWidth }) {
@@ -96,10 +100,9 @@ function canvasResizeImage(dispatch, { resizedWidth }) {
 
   function drawCurrent() {
     // Get the image data
-    const imageDataPtr = carver.image_data_ptr();
     const imageData = new Uint8ClampedArray(
       memory().buffer,
-      imageDataPtr,
+      carver.image_data_ptr(),
       carver.width * carver.height * 4
     );
 
@@ -172,23 +175,9 @@ function App() {
           canvasLoadExternalImage(dispatch, { imageUrl });
           dispatch({ type: "IMAGE_SELECT_CLOSED" });
         }}
-        handleImageUpload={(e) => {
-          const file = e.target.files[0];
-          const img = document.createElement("img");
-          img.src = window.URL.createObjectURL(file);
-
-          img.onload = function () {
-            console.log(img.width);
-            console.log(img.height);
-
-            const { source } = getCanvasElements();
-            source.width = img.width;
-            source.height = img.height;
-            const ctx = source.getContext("2d");
-            // prettier-ignore
-            ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, source.width, source.height);
-          };
-        }}
+        handleImageUpload={(e) =>
+          canvasUploadedImage(dispatch, { inputEvent: e })
+        }
         handleClose={() => dispatch({ type: "IMAGE_SELECT_CLOSED" })}
       />
     </div>

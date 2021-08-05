@@ -2,19 +2,19 @@
   "files": {
     "main.js": "/rust-wasm-seam-carving/static/js/main.3f57189b.chunk.js",
     "main.js.map": "/rust-wasm-seam-carving/static/js/main.3f57189b.chunk.js.map",
-    "runtime-main.js": "/rust-wasm-seam-carving/static/js/runtime-main.9a78e081.js",
-    "runtime-main.js.map": "/rust-wasm-seam-carving/static/js/runtime-main.9a78e081.js.map",
+    "runtime-main.js": "/rust-wasm-seam-carving/static/js/runtime-main.43b590b8.js",
+    "runtime-main.js.map": "/rust-wasm-seam-carving/static/js/runtime-main.43b590b8.js.map",
     "static/js/2.d2a0cfba.chunk.js": "/rust-wasm-seam-carving/static/js/2.d2a0cfba.chunk.js",
     "static/js/2.d2a0cfba.chunk.js.map": "/rust-wasm-seam-carving/static/js/2.d2a0cfba.chunk.js.map",
     "static/css/3.5db61eec.chunk.css": "/rust-wasm-seam-carving/static/css/3.5db61eec.chunk.css",
-    "static/js/3.6974bb6a.chunk.js": "/rust-wasm-seam-carving/static/js/3.6974bb6a.chunk.js",
-    "e57707ed8c7ff098590d.module.wasm": "/rust-wasm-seam-carving/e57707ed8c7ff098590d.module.wasm",
-    "static/js/3.6974bb6a.chunk.js.map": "/rust-wasm-seam-carving/static/js/3.6974bb6a.chunk.js.map",
+    "static/js/3.696248cc.chunk.js": "/rust-wasm-seam-carving/static/js/3.696248cc.chunk.js",
+    "91f470925f3ada90951a.module.wasm": "/rust-wasm-seam-carving/91f470925f3ada90951a.module.wasm",
+    "static/js/3.696248cc.chunk.js.map": "/rust-wasm-seam-carving/static/js/3.696248cc.chunk.js.map",
     "index.html": "/rust-wasm-seam-carving/index.html",
     "static/css/3.5db61eec.chunk.css.map": "/rust-wasm-seam-carving/static/css/3.5db61eec.chunk.css.map"
   },
   "entrypoints": [
-    "static/js/runtime-main.9a78e081.js",
+    "static/js/runtime-main.43b590b8.js",
     "static/js/main.3f57189b.chunk.js"
   ]
 }

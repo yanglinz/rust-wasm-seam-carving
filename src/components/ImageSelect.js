@@ -46,7 +46,8 @@ function Dialog(props) {
 }
 
 function ImageSelect(props) {
-  const { globalState, handleImageSelect, handleClose } = props;
+  const { globalState, handleImageSelect, handleImageUpload, handleClose } =
+    props;
 
   if (globalState.control.state !== "IMAGE_SELECT") {
     return null;
@@ -94,6 +95,14 @@ function ImageSelect(props) {
         <Button intent="SECONDARY" onClick={handleClose}>
           Cancel
         </Button>
+      </div>
+
+      <div>
+        <input
+          type="file"
+          accept="image/png, image/jpeg"
+          onChange={handleImageUpload}
+        />
       </div>
     </Dialog>
   );

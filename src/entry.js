@@ -98,7 +98,7 @@ function canvasResizeImage(dispatch, { resizedWidth }) {
     source.height
   );
 
-  function drawCurrent() {
+  function draw() {
     // Get the image data
     const imageData = new Uint8ClampedArray(
       memory().buffer,
@@ -124,11 +124,11 @@ function canvasResizeImage(dispatch, { resizedWidth }) {
     }
 
     carver.mark_seam();
-    drawCurrent();
+    draw();
 
     requestAnimationFrame(() => {
       carver.delete_seam();
-      drawCurrent();
+      draw();
       steps -= 1;
 
       requestAnimationFrame(incrementalResize);

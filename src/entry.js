@@ -4,6 +4,7 @@ import ReactDOM from "react-dom";
 
 import { SeamCarver, wasm_memory as memory } from "./pkg";
 import { onDocumentReady } from "./helpers/dom";
+import { demoImages } from "./helpers/unsplash";
 import ImageSelect from "./components/ImageSelect";
 import ImageCanvas, { getCanvasElements } from "./components/ImageCanvas";
 import Controls from "./components/Controls";
@@ -143,9 +144,11 @@ function canvasResizeImage(dispatch, { resizedWidth }) {
 function App() {
   const [state, dispatch] = useReducer(appStateReducer, initialAppState);
 
-  const DEMO_IMAGE = "https://source.unsplash.com/yRjLihK35Yw/500x250";
   useEffect(
-    () => canvasLoadExternalImage(dispatch, { imageUrl: DEMO_IMAGE }),
+    () =>
+      canvasLoadExternalImage(dispatch, {
+        imageUrl: demoImages["F6XKjhMNB14"].url,
+      }),
     []
   );
 

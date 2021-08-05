@@ -1,5 +1,6 @@
 import ReactDOM from "react-dom";
 import Button from "./Button";
+import { demoImages } from "../helpers/unsplash";
 
 function getModalTargetEl(id = "dialog-mount") {
   let el = document.getElementById(id);
@@ -53,23 +54,6 @@ function ImageSelect(props) {
     return null;
   }
 
-  const unsplashIds = [
-    ["yRjLihK35Yw", "title"],
-    ["e-S-Pe2EmrE", "Birds in the sky"],
-    ["F6XKjhMNB14", "Waves on a beach"],
-    ["KGwK6n7rxSg", "Hot balloons"],
-    ["C9XgrB8hqBI", "Top down shot of beach"],
-    ["pVr6wvUneMk", "Desert landscape"],
-    ["Pn6iimgM-wo", "Light house at night"],
-    ["4Oi1756LtF4", "Castle"],
-  ];
-
-  const images = unsplashIds.map(([unsplashId, alt]) => ({
-    alt,
-    url: `https://source.unsplash.com/${unsplashId}/1000x500`,
-    previewUrl: `https://source.unsplash.com/${unsplashId}/200x150`,
-  }));
-
   return (
     <Dialog>
       <div className="pb-4 pt-5 px-4 bg-white sm:p-6 sm:pb-4">
@@ -79,14 +63,17 @@ function ImageSelect(props) {
           </h3>
 
           <div className="grid gap-1 grid-cols-4 overflow-hidden">
-            {images.map((i) => (
-              <img
-                className="inline-block w-20 h-20 rounded-full"
-                onClick={() => handleImageSelect(i.url)}
-                alt={i.alt}
-                src={i.previewUrl}
-              ></img>
-            ))}
+            {Object.keys(demoImages).map((key, index) => {
+              const i = demoImages[key];
+              return (
+                <img
+                  className="inline-block w-20 h-20 rounded-full"
+                  onClick={() => handleImageSelect(i.url)}
+                  alt={i.alt}
+                  src={i.previewUrl}
+                ></img>
+              );
+            })}
           </div>
         </div>
       </div>

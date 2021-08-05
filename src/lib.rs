@@ -56,6 +56,26 @@ impl SeamCarver {
         }
     }
 
+    pub fn from_vec(image_data: Vec<u8>, width: u32, height: u32) -> SeamCarver {
+        let mut image_data_copy: Vec<u8> = vec![];
+        for d in image_data.iter() {
+            image_data_copy.push(*d);
+        }
+
+        let context = carver::ImageContext {
+            width: width,
+            height: height,
+        };
+        let image_matrix = carver::get_image_pixel_matrix(context, image_data_copy);
+
+        SeamCarver {
+            width: width,
+            height: height,
+            image_data: image_data,
+            image_matrix: image_matrix,
+        }
+    }
+
     pub fn mark_seam(&mut self) {
         let context = carver::ImageContext {
             width: self.width,
@@ -90,6 +110,10 @@ impl SeamCarver {
 
     pub fn image_data_ptr(&self) -> *const u8 {
         self.image_data.as_ptr()
+    }
+
+    pub fn image_data_vec(&self) -> Vec<u8> {
+        self.image_data.clone()
     }
 }
 

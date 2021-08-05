@@ -88,7 +88,7 @@ function App() {
   function handleResize(resizedWidth) {
     const { source, target } = getCanvasElements();
 
-    const carver = SeamCarver.new(
+    const carver = SeamCarver.from_canvas(
       source.getContext("2d"),
       source.width,
       source.height

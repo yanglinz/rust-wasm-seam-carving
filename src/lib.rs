@@ -26,7 +26,7 @@ pub struct SeamCarver {
 
 #[wasm_bindgen]
 impl SeamCarver {
-    pub fn new(ctx: &CanvasRenderingContext2d, width: u32, height: u32) -> SeamCarver {
+    pub fn from_canvas(ctx: &CanvasRenderingContext2d, width: u32, height: u32) -> SeamCarver {
         panic::set_hook(Box::new(console_error_panic_hook::hook));
 
         // Find a more consice way to create the vector

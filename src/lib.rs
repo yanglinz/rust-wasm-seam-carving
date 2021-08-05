@@ -13,10 +13,6 @@ macro_rules! log {
 }
 
 #[wasm_bindgen]
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct ColorRange(u8);
-
-#[wasm_bindgen]
 pub struct SeamCarver {
     pub width: u32,
     pub height: u32,

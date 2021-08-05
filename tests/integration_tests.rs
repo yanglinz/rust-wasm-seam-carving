@@ -16,47 +16,46 @@ mod integration {
 
     #[test]
     fn test_beach_example() {
-        // let (dimensions, rgba) = fixture::get_fixture_image("beach-1.jpeg");
-        // let resized_width = dimensions.width - 100;
-        // let resized_height = dimensions.height;
+        let (dimensions, image_data) = fixture::get_fixture_image("beach-1.jpeg");
 
-        // let resized = seam_carver::resize_internal(
-        //     rgba,
-        //     dimensions.width,
-        //     dimensions.height,
-        //     resized_width,
-        //     resized_height,
-        // );
-        // let expected_size = resized_width * resized_height * 4;
-        // assert_eq!(resized.len(), expected_size as usize);
-        // fixture::save_fixture_image(
-        //     "beach-1-resized.jpeg",
-        //     resized_width,
-        //     resized_height,
-        //     resized,
-        // );
+        let mut carver =
+            seam_carving::SeamCarver::from_vec(image_data, dimensions.width, dimensions.height);
+        let steps = 100;
+        for _ in 0..steps {
+            carver.mark_seam();
+            carver.delete_seam();
+        }
+
+        let resized_image_data = carver.image_data_vec();
+        let expected_size = (dimensions.width - steps) * dimensions.height * 4;
+        assert_eq!(resized_image_data.len(), expected_size as usize);
+        fixture::save_fixture_image(
+            "beach-1-resized.jpeg",
+            dimensions.width - steps,
+            dimensions.height,
+            resized_image_data,
+        );
     }
 
     #[test]
     fn test_beach_flipped_example() {
-        // let (dimensions, rgba) = fixture::get_fixture_image("beach-1-flipped.jpeg");
-        // let resized_width = dimensions.width - 100;
-        // let resized_height = dimensions.height;
+        let (dimensions, image_data) = fixture::get_fixture_image("beach-1-flipped.jpeg");
+        let mut carver =
+            seam_carving::SeamCarver::from_vec(image_data, dimensions.width, dimensions.height);
+        let steps = 100;
+        for _ in 0..steps {
+            carver.mark_seam();
+            carver.delete_seam();
+        }
 
-        // let resized = seam_carver::resize_internal(
-        //     rgba,
-        //     dimensions.width,
-        //     dimensions.height,
-        //     resized_width,
-        //     resized_height,
-        // );
-        // let expected_size = resized_width * resized_height * 4;
-        // assert_eq!(resized.len(), expected_size as usize);
-        // fixture::save_fixture_image(
-        //     "beach-1-flipped-resized.jpeg",
-        //     resized_width,
-        //     resized_height,
-        //     resized,
-        // );
+        let resized_image_data = carver.image_data_vec();
+        let expected_size = (dimensions.width - steps) * dimensions.height * 4;
+        assert_eq!(resized_image_data.len(), expected_size as usize);
+        fixture::save_fixture_image(
+            "beach-1-flipped-resized.jpeg",
+            dimensions.width - steps,
+            dimensions.height,
+            resized_image_data,
+        );
     }
 }

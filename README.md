@@ -14,5 +14,6 @@ cargo
 ```
 
 ```
+yarn install
 cargo install cargo-watch
 ```

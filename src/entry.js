@@ -46,9 +46,7 @@ function appStateReducer(state, action) {
   if (!modifer) {
     throw new Error("Unknown action type in reducer.");
   }
-
-  const nextState = produce(state, (draftState) => modifer(draftState, action));
-  return nextState;
+  return produce(state, (draftState) => modifer(draftState, action));
 }
 
 function App() {

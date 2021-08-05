@@ -29,24 +29,18 @@ impl SeamCarver {
     pub fn from_canvas(ctx: &CanvasRenderingContext2d, width: u32, height: u32) -> SeamCarver {
         panic::set_hook(Box::new(console_error_panic_hook::hook));
 
-        // Find a more consice way to create the vector
-        let mut image_data: Vec<u8> = vec![];
-        let mut image_data_copy: Vec<u8> = vec![];
-        for d in ctx
+        let image_data: Vec<u8> = ctx
             .get_image_data(0.0, 0.0, width as f64, height as f64)
             .unwrap()
             .data()
             .iter()
-        {
-            image_data.push(*d);
-            image_data_copy.push(*d);
-        }
-
+            .map(|d| *d)
+            .collect();
         let context = carver::ImageContext {
             width: width,
             height: height,
         };
-        let image_matrix = carver::get_image_pixel_matrix(context, image_data_copy);
+        let image_matrix = carver::get_image_pixel_matrix(context, image_data.clone());
 
         SeamCarver {
             width: width,
@@ -57,16 +51,11 @@ impl SeamCarver {
     }
 
     pub fn from_vec(image_data: Vec<u8>, width: u32, height: u32) -> SeamCarver {
-        let mut image_data_copy: Vec<u8> = vec![];
-        for d in image_data.iter() {
-            image_data_copy.push(*d);
-        }
-
         let context = carver::ImageContext {
             width: width,
             height: height,
         };
-        let image_matrix = carver::get_image_pixel_matrix(context, image_data_copy);
+        let image_matrix = carver::get_image_pixel_matrix(context, image_data.clone());
 
         SeamCarver {
             width: width,

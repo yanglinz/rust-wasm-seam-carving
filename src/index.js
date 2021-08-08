@@ -1,4 +1,5 @@
-// Make a note about how we need module to be async
+// Any WASM module must be imported asynchronously. So here we'll wrap the entire app
+// in a single `import()` so that child modules don't have to deal with the async loading.
 import("./entry.js").catch((e) =>
   console.error("Error importing `entry.js`:", e)
 );

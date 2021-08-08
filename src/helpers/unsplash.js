@@ -14,7 +14,7 @@ function getDemoImages() {
     demoImages[key] = {
       ...demoImages[key],
       url: `https://source.unsplash.com/${key}/1000x500`,
-      previewUrl: `https://source.unsplash.com/${key}/200x150`,
+      previewUrl: `https://source.unsplash.com/${key}/200x200`,
     };
   });
 

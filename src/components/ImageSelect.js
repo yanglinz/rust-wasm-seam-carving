@@ -59,7 +59,7 @@ function ImageSelect(props) {
       <div className="pb-4 pt-5 px-4 bg-white sm:p-6 sm:pb-4">
         <div className="flex flex-col content-center items-center">
           <h3 className="my-3 text-gray-900 text-lg font-medium leading-6">
-            Select Image
+            Select or Upload Image
           </h3>
 
           <div className="grid gap-1 grid-cols-4 overflow-hidden">
@@ -67,13 +67,22 @@ function ImageSelect(props) {
               const i = demoImages[key];
               return (
                 <img
-                  className="inline-block w-20 h-20 rounded-full"
+                  className="inline-block w-20 h-20"
                   onClick={() => handleImageSelect(i.url)}
                   alt={i.alt}
                   src={i.previewUrl}
                 ></img>
               );
             })}
+          </div>
+
+          <div className="my-3">
+            <input
+              className="inline-block"
+              type="file"
+              accept="image/png, image/jpeg"
+              onChange={handleImageUpload}
+            />
           </div>
         </div>
       </div>
@@ -82,14 +91,6 @@ function ImageSelect(props) {
         <Button intent="SECONDARY" onClick={handleClose}>
           Cancel
         </Button>
-      </div>
-
-      <div>
-        <input
-          type="file"
-          accept="image/png, image/jpeg"
-          onChange={handleImageUpload}
-        />
       </div>
     </Dialog>
   );

@@ -61,19 +61,17 @@ function canvasLoadImage(dispatch, { image }) {
 }
 
 function canvasLoadExternalImage(dispatch, { imageUrl }) {
-  return fetch(imageUrl)
-    .then((r) => r.blob())
-    .then((blob) => createImageBitmap(blob))
-    .then((image) => {
-      canvasLoadImage(dispatch, { image });
-      return image;
-    })
-    .then((image) => {
-      dispatch({
-        type: "IMAGE_LOADED",
-        payload: { width: image.width, height: image.height, url: imageUrl },
-      });
+  const image = document.createElement("img");
+  image.src = imageUrl;
+  image.crossOrigin = "Anonymous";
+
+  image.onload = function () {
+    canvasLoadImage(dispatch, { image });
+    dispatch({
+      type: "IMAGE_LOADED",
+      payload: { width: image.width, height: image.height, url: image.src },
     });
+  };
 }
 
 function canvasUploadedImage(dispatch, { inputEvent }) {

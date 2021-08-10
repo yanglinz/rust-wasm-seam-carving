@@ -4,7 +4,7 @@ import ReactDOM from "react-dom";
 
 import { SeamCarver, wasm_memory as memory } from "./pkg";
 import { onDocumentReady } from "./helpers/dom";
-import { demoImages } from "./helpers/unsplash";
+import { getDemoImages } from "./helpers/unsplash";
 import ImageSelect from "./components/ImageSelect";
 import ImageCanvas, { getCanvasElements } from "./components/ImageCanvas";
 import Controls from "./components/Controls";
@@ -145,7 +145,7 @@ function App() {
   useEffect(
     () =>
       canvasLoadExternalImage(dispatch, {
-        imageUrl: demoImages["F6XKjhMNB14"].url,
+        imageUrl: getDemoImages()["KGwK6n7rxSg"].url,
       }),
     []
   );

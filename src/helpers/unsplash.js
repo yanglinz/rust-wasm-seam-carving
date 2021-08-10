@@ -1,6 +1,6 @@
-function getDemoImages() {
+export function getDemoImages() {
   const demoImages = {
-    ["yRjLihK35Yw"]: { alt: "Title" },
+    ["yRjLihK35Yw"]: { alt: "Balloons in the sky" },
     ["e-S-Pe2EmrE"]: { alt: "Birds in the sky" },
     ["F6XKjhMNB14"]: { alt: "Waves on a beach" },
     ["KGwK6n7rxSg"]: { alt: "Hot balloons" },
@@ -20,5 +20,3 @@ function getDemoImages() {
 
   return demoImages;
 }
-
-export const demoImages = getDemoImages();

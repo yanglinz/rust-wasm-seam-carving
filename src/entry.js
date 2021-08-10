@@ -11,6 +11,9 @@ import Controls from "./components/Controls";
 
 import "./index.css";
 
+// Most of the boilerplate below are just React UI state tracking;
+// not particularly relevant to the Seam Carving algorithm.
+
 const initialAppState = {
   selectedImage: {
     state: "INITIAL",
@@ -91,6 +94,8 @@ function canvasUploadedImage(dispatch, { inputEvent }) {
 function canvasResizeImage(dispatch, { resizedWidth }) {
   const { source, target } = getCanvasElements();
 
+  // SeamCarver module is bindings generated from wasm-pack, and corresponds to 
+  // the implementation of the same name in src/lib.rs.
   const carver = SeamCarver.from_canvas(
     source.getContext("2d"),
     source.width,
@@ -98,14 +103,15 @@ function canvasResizeImage(dispatch, { resizedWidth }) {
   );
 
   function draw() {
-    // Get the image data
+    // Generating a Uint8ClampedArray from the shared memory is a critial component
+    // of how we can efficiently manipulate large vectors without paying the
+    // serialization/deserialization cost on each iteration.
     const imageData = new Uint8ClampedArray(
       memory().buffer,
       carver.image_data_ptr(),
       carver.width * carver.height * 4
     );
 
-    // Draw the image data
     target.width = carver.width;
     target.height = carver.height;
     const imageDataWrapper = new ImageData(
@@ -116,6 +122,9 @@ function canvasResizeImage(dispatch, { resizedWidth }) {
     target.getContext("2d").putImageData(imageDataWrapper, 0, 0);
   }
 
+  // Recursively delete seams until we reach our desized target size.
+  // Not that for each iteration, we call draw in with the seam drawn
+  // and once more with the seam removed to animate the actual seam.
   let steps = source.width - resizedWidth;
   function incrementalResize() {
     if (steps <= 0) {
@@ -188,8 +197,3 @@ function App() {
 onDocumentReady(() => {
   ReactDOM.render(<App />, document.getElementById("app"));
 });
-
-if (module.hot) {
-  // Disable HMR in development
-  module.hot.decline();
-}

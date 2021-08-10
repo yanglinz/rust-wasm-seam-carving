@@ -6,19 +6,21 @@ pub struct ImageContext {
     pub height: u32,
 }
 
-// Zero-indexed representation of image pixel coordinates
+// Zero-indexed representation of image pixel coordinates.
 #[derive(Copy, Clone)]
 struct PixelPosition {
     x: u32,
     y: u32,
 }
 
+// Binary represenation of whether a pixel is a seam.
 #[derive(Copy, Clone, PartialEq)]
 enum PixelStatus {
     Live,
     Seam,
 }
 
+// Wrapper struc to represent all the state we need to track for a given pixel.
 #[derive(Copy, Clone)]
 pub struct ImagePixel {
     // Color representation
@@ -52,7 +54,8 @@ fn get_pixel_position(context: ImageContext, index: usize) -> PixelPosition {
     return PixelPosition { x: x, y: y };
 }
 
-// Helper to get a given pixel's neighbor index
+// For the energy calculation, we need a helper to get the index of pixels that
+// are adjacent (top, bottom, left, right) for a given pixel.
 fn get_neighbor_pixel_index(
     context: ImageContext,
     index: usize,
@@ -85,7 +88,7 @@ fn get_neighbor_pixel_index(
     ));
 }
 
-// Helper to get a given pixel's neighbor pixel
+// Wrapper for get_neighbor_pixel_index to get the actual pixel state.
 fn get_neighbor_pixel(
     context: ImageContext,
     image_pixel_matrix: &Vec<ImagePixel>,
@@ -101,7 +104,7 @@ fn get_neighbor_pixel(
     return pixel;
 }
 
-// We can initialize the image "matrix" with some placeholder values.
+// Helper to initialize the image pixel matrix with its proper initial state.
 pub fn get_image_pixel_matrix(context: ImageContext, image_data: Vec<u8>) -> Vec<ImagePixel> {
     let w_matrix = context.width as usize;
     let h_matrix = context.height as usize;
@@ -143,6 +146,7 @@ pub fn get_image_pixel_matrix(context: ImageContext, image_data: Vec<u8>) -> Vec
     return matrix;
 }
 
+// Helper to update each pixel's position value in the image matrix vector.
 pub fn mark_pixel_position(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
     for (i, pixel) in image_pixel_matrix.iter_mut().enumerate() {
         let pos = get_pixel_position(context, i);
@@ -150,7 +154,10 @@ pub fn mark_pixel_position(context: ImageContext, image_pixel_matrix: &mut Vec<I
     }
 }
 
-// Helper function to calculate the image pixel "energy" from its neighbors.
+// Helper to calculate the energy of a pixel - which is the core to the algorithm.
+// We remove seams made up of pixels "line" of the lowest total energy. 
+// An individual energy is calculated as the "distance" of colors between a pixel
+// and its neighbors. Higher the "distance", higher the "energy".
 fn get_energy(
     pixel: ImagePixel,
     pixel_left: Option<ImagePixel>,
@@ -178,7 +185,7 @@ fn get_energy(
     return (left_energy + right_energy).sqrt();
 }
 
-// Mark the energy for every pixel in the image matrix.
+// Helper to update each pixel's energy value in the image matrix vector.
 pub fn mark_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
     let w_matrix = context.width as usize;
     let h_matrix = context.height as usize;
@@ -202,6 +209,10 @@ pub fn mark_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<Image
     }
 }
 
+// An seam energy map is related to the energy map. The idea is that to efficiently
+// calculate the seam on each iteration, we can use dynamic programming to 
+// pre-calculate all the lowest possible energy paths for the current iteration. 
+// So the seam energy map is the "sum" of the lowest energy total possible for a pixel.
 pub fn mark_seam_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
     let w_matrix = context.width as usize;
     let h_matrix = context.height as usize;
@@ -235,6 +246,9 @@ pub fn mark_seam_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<
     }
 }
 
+// Once the seam energy map is marked, we can determine the seam by taking the lowest 
+// total seam enegy of the bottom edge, and traverse to the top of the image by 
+// iteratively taking the lowest top-adjacent seam energy.
 pub fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
     let w_matrix = context.width as usize;
     let h_matrix = context.height as usize;
@@ -293,6 +307,8 @@ pub fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>
     }
 }
 
+// Finally, we can remove the seam from the vector. We'll also need to make sure to update
+// our internal state of the width and height accordingly.
 pub fn remove_seam(_context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
     image_pixel_matrix.retain(|p| p.status != PixelStatus::Seam);
 }

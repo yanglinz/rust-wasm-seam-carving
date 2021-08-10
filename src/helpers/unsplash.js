@@ -1,6 +1,6 @@
-function getDemoImages() {
+export function getDemoImages() {
   const demoImages = {
-    ["yRjLihK35Yw"]: { alt: "Title" },
+    ["yRjLihK35Yw"]: { alt: "Balloons in the sky" },
     ["e-S-Pe2EmrE"]: { alt: "Birds in the sky" },
     ["F6XKjhMNB14"]: { alt: "Waves on a beach" },
     ["KGwK6n7rxSg"]: { alt: "Hot balloons" },
@@ -10,15 +10,16 @@ function getDemoImages() {
     ["4Oi1756LtF4"]: { alt: "Castle" },
   };
 
+  const screenWidth = Math.round(window.innerWidth * 0.8);
+  const width = Math.min(1000, screenWidth);
+  const height = width / 2;
   Object.keys(demoImages).map((key, index) => {
     demoImages[key] = {
       ...demoImages[key],
-      url: `https://source.unsplash.com/${key}/1000x500`,
+      url: `https://source.unsplash.com/${key}/${width}x${height}`,
       previewUrl: `https://source.unsplash.com/${key}/200x200`,
     };
   });
 
   return demoImages;
 }
-
-export const demoImages = getDemoImages();

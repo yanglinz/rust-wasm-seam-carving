@@ -1,6 +1,6 @@
 import ReactDOM from "react-dom";
 import Button from "./Button";
-import { demoImages } from "../helpers/unsplash";
+import { getDemoImages } from "../helpers/unsplash";
 
 function getModalTargetEl(id = "dialog-mount") {
   let el = document.getElementById(id);
@@ -54,6 +54,7 @@ function ImageSelect(props) {
     return null;
   }
 
+  const demoImages = getDemoImages();
   return (
     <Dialog>
       <div className="pb-4 pt-5 px-4 bg-white sm:p-6 sm:pb-4">

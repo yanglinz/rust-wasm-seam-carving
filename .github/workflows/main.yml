@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: volta-cli/action@v1
-      - run: node --version
-      - run: yarn --version
+      - run: which node && node --version
+      - run: which yarn && yarn --version
       - run: yarn install
       - run: PUBLIC_URL="/rust-wasm-seam-carving/" yarn build

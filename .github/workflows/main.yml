@@ -15,7 +15,8 @@ jobs:
 
   build_rs:
     runs-on: ubuntu-latest
-    - uses: actions-rs/toolchain@v1
+    steps:
+      - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-    - run: cargo test
+      - run: cargo test

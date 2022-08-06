@@ -3,7 +3,7 @@ name: Main Workflow
 on: [push]
 
 jobs:
-  main:
+  build_js:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -11,4 +11,11 @@ jobs:
       - run: which node && node --version
       - run: which yarn && yarn --version
       - run: yarn install
-      - run: PUBLIC_URL="/rust-wasm-seam-carving/" yarn build
+      - run: yarn build
+
+  build_rs:
+    runs-on: ubuntu-latest
+    - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+    - run: cargo test

@@ -1,0 +1,4 @@
+[toolchain]
+# https://rust-lang.github.io/rustup/concepts/profiles.html
+profile = "default"
+channel = "1.62.0"

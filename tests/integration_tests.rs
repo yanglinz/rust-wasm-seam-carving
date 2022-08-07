@@ -1,5 +1,3 @@
-use seam_carving;
-
 mod fixture;
 
 #[cfg(test)]

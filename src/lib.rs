@@ -6,11 +6,12 @@ use std::panic;
 
 mod carver;
 
-macro_rules! log {
-    ( $( $t:tt )* ) => {
-        web_sys::console::log_1(&format!( $( $t )* ).into());
-    }
-}
+// Uncomment to debug with console.log
+// macro_rules! log {
+//     ( $( $t:tt )* ) => {
+//         web_sys::console::log_1(&format!( $( $t )* ).into());
+//     }
+// }
 
 #[wasm_bindgen]
 pub struct SeamCarver {
@@ -30,34 +31,28 @@ impl SeamCarver {
             .unwrap()
             .data()
             .iter()
-            .map(|d| *d)
+            .copied()
             .collect();
-        let context = carver::ImageContext {
-            width: width,
-            height: height,
-        };
+        let context = carver::ImageContext { width, height };
         let image_matrix = carver::get_image_pixel_matrix(context, image_data.clone());
 
         SeamCarver {
-            width: width,
-            height: height,
-            image_data: image_data,
-            image_matrix: image_matrix,
+            width,
+            height,
+            image_data,
+            image_matrix,
         }
     }
 
     pub fn from_vec(image_data: Vec<u8>, width: u32, height: u32) -> SeamCarver {
-        let context = carver::ImageContext {
-            width: width,
-            height: height,
-        };
+        let context = carver::ImageContext { width, height };
         let image_matrix = carver::get_image_pixel_matrix(context, image_data.clone());
 
         SeamCarver {
-            width: width,
-            height: height,
-            image_data: image_data,
-            image_matrix: image_matrix,
+            width,
+            height,
+            image_data,
+            image_matrix,
         }
     }
 

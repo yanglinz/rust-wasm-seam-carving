@@ -211,7 +211,7 @@ pub fn mark_energy_map(context: ImageContext, image_pixel_matrix: &mut [ImagePix
 // calculate the seam on each iteration, we can use dynamic programming to
 // pre-calculate all the lowest possible energy paths for the current iteration.
 // So the seam energy map is the "sum" of the lowest energy total possible for a pixel.
-pub fn mark_seam_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
+pub fn mark_seam_energy_map(context: ImageContext, image_pixel_matrix: &mut [ImagePixel]) {
     let w_matrix = context.width as usize;
     let h_matrix = context.height as usize;
 
@@ -247,7 +247,7 @@ pub fn mark_seam_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<
 // Once the seam energy map is marked, we can determine the seam by taking the lowest
 // total seam enegy of the bottom edge, and traverse to the top of the image by
 // iteratively taking the lowest top-adjacent seam energy.
-pub fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
+pub fn mark_seam(context: ImageContext, image_pixel_matrix: &mut [ImagePixel]) {
     let w_matrix = context.width as usize;
     let h_matrix = context.height as usize;
 

@@ -68,8 +68,7 @@ fn get_neighbor_pixel_index(
     }
 
     let pos = get_pixel_position(context, index);
-    let will_overflow = false
-        || (pos.y == 0 && offset_y == -1)
+    let will_overflow = (pos.y == 0 && offset_y == -1)
         || (pos.y == context.height - 1 && offset_y == 1)
         || (pos.x == 0 && offset_x == -1)
         || (pos.x == context.width - 1 && offset_x == 1);
@@ -91,17 +90,16 @@ fn get_neighbor_pixel_index(
 // Wrapper for get_neighbor_pixel_index to get the actual pixel state.
 fn get_neighbor_pixel(
     context: ImageContext,
-    image_pixel_matrix: &Vec<ImagePixel>,
+    image_pixel_matrix: &[ImagePixel],
     index: usize,
     offset_x: i8,
     offset_y: i8,
 ) -> Option<ImagePixel> {
     let index = get_neighbor_pixel_index(context, index, offset_x, offset_y);
-    let pixel = match index {
+    match index {
         None => None,
         _ => Some(image_pixel_matrix[index.unwrap()]),
-    };
-    pixel
+    }
 }
 
 // Helper to initialize the image pixel matrix with its proper initial state.
@@ -186,7 +184,7 @@ fn get_energy(
 }
 
 // Helper to update each pixel's energy value in the image matrix vector.
-pub fn mark_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
+pub fn mark_energy_map(context: ImageContext, image_pixel_matrix: &mut [ImagePixel]) {
     let w_matrix = context.width as usize;
     let h_matrix = context.height as usize;
 

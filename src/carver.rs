@@ -129,7 +129,7 @@ pub fn get_image_pixel_matrix(context: ImageContext, image_data: Vec<u8>) -> Vec
                 y: h as u32,
             };
             let pixel = ImagePixel {
-                r: image_data[start_index + 0],
+                r: image_data[start_index],
                 g: image_data[start_index + 1],
                 b: image_data[start_index + 2],
                 a: image_data[start_index + 3],
@@ -147,7 +147,7 @@ pub fn get_image_pixel_matrix(context: ImageContext, image_data: Vec<u8>) -> Vec
 }
 
 // Helper to update each pixel's position value in the image matrix vector.
-pub fn mark_pixel_position(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
+pub fn mark_pixel_position(context: ImageContext, image_pixel_matrix: &mut [ImagePixel]) {
     for (i, pixel) in image_pixel_matrix.iter_mut().enumerate() {
         let pos = get_pixel_position(context, i);
         pixel.position = pos;
@@ -315,7 +315,7 @@ pub fn remove_seam(_context: ImageContext, image_pixel_matrix: &mut Vec<ImagePix
 
 pub fn get_image_data_from_pixels(
     context: ImageContext,
-    image_pixel_matrix: &mut Vec<ImagePixel>,
+    image_pixel_matrix: &mut [ImagePixel],
 ) -> Vec<u8> {
     let mut data = Vec::new();
     for h in 0..context.height {

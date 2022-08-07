@@ -30,7 +30,7 @@ impl SeamCarver {
             .unwrap()
             .data()
             .iter()
-            .map(|d| *d)
+            .copied()
             .collect();
         let context = carver::ImageContext { width, height };
         let image_matrix = carver::get_image_pixel_matrix(context, image_data.clone());

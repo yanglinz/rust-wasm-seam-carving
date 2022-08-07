@@ -45,10 +45,7 @@ impl SeamCarver {
     }
 
     pub fn from_vec(image_data: Vec<u8>, width: u32, height: u32) -> SeamCarver {
-        let context = carver::ImageContext {
-            width,
-            height,
-        };
+        let context = carver::ImageContext { width, height };
         let image_matrix = carver::get_image_pixel_matrix(context, image_data.clone());
 
         SeamCarver {

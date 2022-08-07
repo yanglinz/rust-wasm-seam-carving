@@ -281,8 +281,8 @@ pub fn mark_seam(context: ImageContext, image_pixel_matrix: &mut [ImagePixel]) {
             let top_right = get_neighbor_pixel(context, image_pixel_matrix, index, 1, -1);
             let neighbors: Vec<ImagePixel> = vec![top_left, top, top_right]
                 .iter()
-                .filter(|p| p.is_some())
-                .map(|p| p.unwrap())
+                .flatten()
+                .copied()
                 .collect();
             let mut min = f32::INFINITY;
             for p in neighbors {

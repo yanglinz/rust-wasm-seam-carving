@@ -1,5 +1,3 @@
-
-
 mod fixture;
 
 #[cfg(test)]

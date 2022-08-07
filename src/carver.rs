@@ -44,14 +44,14 @@ fn get_pixel_index(context: ImageContext, pos: PixelPosition) -> usize {
         panic!("PixelPosition's x and/or y exceeds image dimensions");
     }
     let index = (context.width * pos.y) + pos.x;
-    return index as usize;
+    index as usize
 }
 
 // Same as the get_pixel_index helper, just with the inverse logic.
 fn get_pixel_position(context: ImageContext, index: usize) -> PixelPosition {
     let x = (index as u32).rem_euclid(context.width);
     let y = index as u32 / context.width;
-    return PixelPosition { x: x, y: y };
+    PixelPosition { x, y }
 }
 
 // For the energy calculation, we need a helper to get the index of pixels that
@@ -79,13 +79,13 @@ fn get_neighbor_pixel_index(
 
     let new_x = pos.x as i32 + offset_x as i32;
     let new_y = pos.y as i32 + offset_y as i32;
-    return Some(get_pixel_index(
+    Some(get_pixel_index(
         context,
         PixelPosition {
             x: new_x as u32,
             y: new_y as u32,
         },
-    ));
+    ))
 }
 
 // Wrapper for get_neighbor_pixel_index to get the actual pixel state.
@@ -101,7 +101,7 @@ fn get_neighbor_pixel(
         None => None,
         _ => Some(image_pixel_matrix[index.unwrap()]),
     };
-    return pixel;
+    pixel
 }
 
 // Helper to initialize the image pixel matrix with its proper initial state.
@@ -143,7 +143,7 @@ pub fn get_image_pixel_matrix(context: ImageContext, image_data: Vec<u8>) -> Vec
         }
     }
 
-    return matrix;
+    matrix
 }
 
 // Helper to update each pixel's position value in the image matrix vector.
@@ -155,7 +155,7 @@ pub fn mark_pixel_position(context: ImageContext, image_pixel_matrix: &mut Vec<I
 }
 
 // Helper to calculate the energy of a pixel - which is the core to the algorithm.
-// We remove seams made up of pixels "line" of the lowest total energy. 
+// We remove seams made up of pixels "line" of the lowest total energy.
 // An individual energy is calculated as the "distance" of colors between a pixel
 // and its neighbors. Higher the "distance", higher the "energy".
 fn get_energy(
@@ -182,7 +182,7 @@ fn get_energy(
         }
     };
 
-    return (left_energy + right_energy).sqrt();
+    (left_energy + right_energy).sqrt()
 }
 
 // Helper to update each pixel's energy value in the image matrix vector.
@@ -210,8 +210,8 @@ pub fn mark_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<Image
 }
 
 // An seam energy map is related to the energy map. The idea is that to efficiently
-// calculate the seam on each iteration, we can use dynamic programming to 
-// pre-calculate all the lowest possible energy paths for the current iteration. 
+// calculate the seam on each iteration, we can use dynamic programming to
+// pre-calculate all the lowest possible energy paths for the current iteration.
 // So the seam energy map is the "sum" of the lowest energy total possible for a pixel.
 pub fn mark_seam_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
     let w_matrix = context.width as usize;
@@ -246,8 +246,8 @@ pub fn mark_seam_energy_map(context: ImageContext, image_pixel_matrix: &mut Vec<
     }
 }
 
-// Once the seam energy map is marked, we can determine the seam by taking the lowest 
-// total seam enegy of the bottom edge, and traverse to the top of the image by 
+// Once the seam energy map is marked, we can determine the seam by taking the lowest
+// total seam enegy of the bottom edge, and traverse to the top of the image by
 // iteratively taking the lowest top-adjacent seam energy.
 pub fn mark_seam(context: ImageContext, image_pixel_matrix: &mut Vec<ImagePixel>) {
     let w_matrix = context.width as usize;
@@ -342,7 +342,7 @@ pub fn get_image_data_from_pixels(
         }
     }
 
-    return data;
+    data
 }
 
 #[cfg(test)]
@@ -363,7 +363,7 @@ mod tests {
                 seam_energy: -1.0,
             })
         }
-        return matrix;
+        matrix
     }
 
     fn from_rgb(rgba_matrix: Vec<(u8, u8, u8)>) -> Vec<ImagePixel> {
@@ -380,7 +380,7 @@ mod tests {
                 seam_energy: -1.0,
             })
         }
-        return matrix;
+        matrix
     }
 
     fn from_rgba(rgba_matrix: Vec<(u8, u8, u8, u8)>) -> Vec<ImagePixel> {
@@ -397,11 +397,11 @@ mod tests {
                 seam_energy: -1.0,
             })
         }
-        return matrix;
+        matrix
     }
 
     fn normalize(image_data: Vec<ImagePixel>) -> Vec<(u8, u8, u8, u8)> {
-        return image_data.iter().map(|p| (p.r, p.g, p.b, p.a)).collect();
+        image_data.iter().map(|p| (p.r, p.g, p.b, p.a)).collect()
     }
 
     #[test]
@@ -530,7 +530,7 @@ mod tests {
     }
 
     fn get_pixel(r: u8, g: u8, b: u8) -> ImagePixel {
-        return ImagePixel {
+        ImagePixel {
             r: r,
             g: g,
             b: b,
@@ -539,7 +539,7 @@ mod tests {
             position: PixelPosition { x: 0, y: 0 },
             energy: -1.0,
             seam_energy: -1.0,
-        };
+        }
     }
 
     #[test]

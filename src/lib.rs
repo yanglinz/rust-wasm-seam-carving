@@ -32,17 +32,14 @@ impl SeamCarver {
             .iter()
             .map(|d| *d)
             .collect();
-        let context = carver::ImageContext {
-            width: width,
-            height: height,
-        };
+        let context = carver::ImageContext { width, height };
         let image_matrix = carver::get_image_pixel_matrix(context, image_data.clone());
 
         SeamCarver {
-            width: width,
-            height: height,
-            image_data: image_data,
-            image_matrix: image_matrix,
+            width,
+            height,
+            image_data,
+            image_matrix,
         }
     }
 
@@ -54,10 +51,10 @@ impl SeamCarver {
         let image_matrix = carver::get_image_pixel_matrix(context, image_data.clone());
 
         SeamCarver {
-            width: width,
-            height: height,
-            image_data: image_data,
-            image_matrix: image_matrix,
+            width,
+            height,
+            image_data,
+            image_matrix,
         }
     }
 

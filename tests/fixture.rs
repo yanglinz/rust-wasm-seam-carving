@@ -17,10 +17,7 @@ pub fn get_fixture_image(image_name: &str) -> (ImageDimension, Vec<u8>) {
 
     let img = image::open(path).expect("input image not found");
     let (width, height) = img.dimensions();
-    let dimensions = ImageDimension {
-        width,
-        height,
-    };
+    let dimensions = ImageDimension { width, height };
     let rgba = img.into_rgba8().into_vec();
 
     (dimensions, rgba)

@@ -121,7 +121,7 @@ pub fn get_image_pixel_matrix(context: ImageContext, image_data: Vec<u8>) -> Vec
     for h in 0..h_matrix {
         for w in 0..w_matrix {
             let start = (h * w_matrix + w) * 4;
-            let start_index = start as usize;
+            let start_index = start;
             let pos = PixelPosition {
                 x: w as u32,
                 y: h as u32,
@@ -233,7 +233,7 @@ pub fn mark_seam_energy_map(context: ImageContext, image_pixel_matrix: &mut [Ima
                 let top_left = get_neighbor_pixel(context, image_pixel_matrix, index, -1, -1);
                 let top = get_neighbor_pixel(context, image_pixel_matrix, index, 0, -1);
                 let top_right = get_neighbor_pixel(context, image_pixel_matrix, index, 1, -1);
-                let min = vec![top_left, top, top_right]
+                let min = [top_left, top, top_right]
                     .iter()
                     .filter(|p| p.is_some())
                     .map(|p| p.unwrap().seam_energy)
@@ -279,7 +279,7 @@ pub fn mark_seam(context: ImageContext, image_pixel_matrix: &mut [ImagePixel]) {
             let top_left = get_neighbor_pixel(context, image_pixel_matrix, index, -1, -1);
             let top = get_neighbor_pixel(context, image_pixel_matrix, index, 0, -1);
             let top_right = get_neighbor_pixel(context, image_pixel_matrix, index, 1, -1);
-            let neighbors: Vec<ImagePixel> = vec![top_left, top, top_right]
+            let neighbors: Vec<ImagePixel> = [top_left, top, top_right]
                 .iter()
                 .flatten()
                 .copied()
@@ -318,13 +318,7 @@ pub fn get_image_data_from_pixels(
     let mut data = Vec::new();
     for h in 0..context.height {
         for w in 0..context.width {
-            let index = get_pixel_index(
-                context,
-                PixelPosition {
-                    x: w as u32,
-                    y: h as u32,
-                },
-            );
+            let index = get_pixel_index(context, PixelPosition { x: w, y: h });
             let pixel = image_pixel_matrix[index];
             if pixel.status == PixelStatus::Seam {
                 data.push(255);
@@ -368,9 +362,9 @@ mod tests {
         let mut matrix = vec![];
         for (r, g, b) in &rgba_matrix {
             matrix.push(ImagePixel {
-                r: *r as u8,
-                g: *g as u8,
-                b: *b as u8,
+                r: *r,
+                g: *g,
+                b: *b,
                 a: 255,
                 status: PixelStatus::Live,
                 position: PixelPosition { x: 0, y: 0 },
@@ -385,10 +379,10 @@ mod tests {
         let mut matrix = vec![];
         for (r, g, b, a) in &rgba_matrix {
             matrix.push(ImagePixel {
-                r: *r as u8,
-                g: *g as u8,
-                b: *b as u8,
-                a: *a as u8,
+                r: *r,
+                g: *g,
+                b: *b,
+                a: *a,
                 status: PixelStatus::Live,
                 position: PixelPosition { x: 0, y: 0 },
                 energy: -1.0,
@@ -408,14 +402,7 @@ mod tests {
             width: 10,
             height: 10,
         };
-        let test_cases = vec![
-            // Tuple of x, y, expected_index
-            (0, 0, 0),
-            (1, 0, 1),
-            (1, 1, 11),
-            (0, 1, 10),
-            (9, 9, 99),
-        ];
+        let test_cases = [(0, 0, 0), (1, 0, 1), (1, 1, 11), (0, 1, 10), (9, 9, 99)];
 
         for (x, y, expected_index) in test_cases.iter() {
             let index = get_pixel_index(
@@ -435,14 +422,7 @@ mod tests {
             width: 10,
             height: 10,
         };
-        let test_cases = vec![
-            // Tuple of index, expected_x, expected_y
-            (0, 0, 0),
-            (1, 1, 0),
-            (11, 1, 1),
-            (10, 0, 1),
-            (99, 9, 9),
-        ];
+        let test_cases = [(0, 0, 0), (1, 1, 0), (11, 1, 1), (10, 0, 1), (99, 9, 9)];
         for (index, expected_x, expected_y) in test_cases.iter() {
             let pos = get_pixel_position(context, *index);
             assert_eq!(pos.x, *expected_x);
@@ -529,9 +509,9 @@ mod tests {
 
     fn get_pixel(r: u8, g: u8, b: u8) -> ImagePixel {
         ImagePixel {
-            r: r,
-            g: g,
-            b: b,
+            r,
+            g,
+            b,
             a: 255,
             status: PixelStatus::Live,
             position: PixelPosition { x: 0, y: 0 },

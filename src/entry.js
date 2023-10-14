@@ -1,5 +1,5 @@
 import React, { useReducer, useEffect } from "react";
-import produce from "immer";
+import { produce } from "immer";
 import ReactDOM from "react-dom";
 
 import { SeamCarver, wasm_memory as memory } from "./pkg";

@@ -29,7 +29,7 @@
     "preact-render-to-string": "5.1.19",
     "react": "npm:@preact/compat",
     "react-dom": "npm:@preact/compat",
-    "wasm-pack": "0.10.0"
+    "wasm-pack": "0.12.1"
   },
   "devDependencies": {
     "@craco/craco": "6.2.0",

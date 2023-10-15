@@ -6,7 +6,7 @@ edition = "2018"
 
 [lib]
 name = "seam_carving"
-crate-type = ["cdylib", "rlib"]
+crate-type = ["rlib"]
 
 [dependencies]
 js-sys = "0.3.64"

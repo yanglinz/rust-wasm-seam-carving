@@ -350,17 +350,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "rust_wasm_seam_carving"
-version = "0.1.0"
-dependencies = [
- "console_error_panic_hook",
- "image",
- "js-sys",
- "wasm-bindgen",
- "web-sys",
-]
-
-[[package]]
 name = "scoped_threadpool"
 version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -453,6 +442,17 @@ name = "wasm-bindgen-shared"
 version = "0.2.87"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ca6ad05a4870b2bf5fe995117d3728437bd27d7cd5f06f13c17443ef369775a1"
+
+[[package]]
+name = "wasm_seam_carving"
+version = "0.1.0"
+dependencies = [
+ "console_error_panic_hook",
+ "image",
+ "js-sys",
+ "wasm-bindgen",
+ "web-sys",
+]
 
 [[package]]
 name = "web-sys"

@@ -1,5 +1,5 @@
 [package]
-name = "rust_wasm_seam_carving"
+name = "wasm_seam_carving"
 version = "0.1.0"
 authors = ["Yanglin Zhao <hi@yanglinzhao.com>"]
 edition = "2018"

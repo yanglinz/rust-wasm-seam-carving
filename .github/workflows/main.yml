@@ -21,6 +21,9 @@ jobs:
         with:
           toolchain: stable
       - run: |
+          cargo fmt --check 
+          (cd seam_carving && cargo fmt --check)
+      - run: |
           cargo test
           (cd seam_carving && cargo test)
       - run: |

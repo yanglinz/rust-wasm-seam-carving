@@ -4,8 +4,6 @@ use web_sys::CanvasRenderingContext2d;
 extern crate console_error_panic_hook;
 use std::panic;
 
-use seam_carving;
-
 // Uncomment to debug with console.log
 // macro_rules! log {
 //     ( $( $t:tt )* ) => {

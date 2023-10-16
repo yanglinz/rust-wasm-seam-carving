@@ -14,7 +14,7 @@ yarn
 cargo
 ```
 
-First, install the application dependencies with
+First, install the application dependencies with:
 
 ```sh
 yarn install

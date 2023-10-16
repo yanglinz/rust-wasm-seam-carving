@@ -20,5 +20,12 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-      - run: cargo test
-      - run: cargo clippy -- -D warnings
+      - run: |
+          cargo fmt --check 
+          (cd seam_carving && cargo fmt --check)
+      - run: |
+          cargo test
+          (cd seam_carving && cargo test)
+      - run: |
+          cargo clippy -- -D warnings
+          (cd seam_carving && cargo clippy -- -D warnings)

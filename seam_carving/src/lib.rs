@@ -1,5 +1,3 @@
-extern crate web_sys;
-
 #[derive(Copy, Clone)]
 pub struct ImageContext {
     pub width: u32,

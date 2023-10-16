@@ -4,8 +4,6 @@ use web_sys::CanvasRenderingContext2d;
 extern crate console_error_panic_hook;
 use std::panic;
 
-mod carver;
-
 // Uncomment to debug with console.log
 // macro_rules! log {
 //     ( $( $t:tt )* ) => {
@@ -18,7 +16,7 @@ pub struct SeamCarver {
     pub width: u32,
     pub height: u32,
     image_data: Vec<u8>,
-    image_matrix: Vec<carver::ImagePixel>,
+    image_matrix: Vec<seam_carving::ImagePixel>,
 }
 
 #[wasm_bindgen]
@@ -33,8 +31,8 @@ impl SeamCarver {
             .iter()
             .copied()
             .collect();
-        let context = carver::ImageContext { width, height };
-        let image_matrix = carver::get_image_pixel_matrix(context, image_data.clone());
+        let context = seam_carving::ImageContext { width, height };
+        let image_matrix = seam_carving::get_image_pixel_matrix(context, image_data.clone());
 
         SeamCarver {
             width,
@@ -45,8 +43,8 @@ impl SeamCarver {
     }
 
     pub fn from_vec(image_data: Vec<u8>, width: u32, height: u32) -> SeamCarver {
-        let context = carver::ImageContext { width, height };
-        let image_matrix = carver::get_image_pixel_matrix(context, image_data.clone());
+        let context = seam_carving::ImageContext { width, height };
+        let image_matrix = seam_carving::get_image_pixel_matrix(context, image_data.clone());
 
         SeamCarver {
             width,
@@ -57,29 +55,29 @@ impl SeamCarver {
     }
 
     pub fn mark_seam(&mut self) {
-        let context = carver::ImageContext {
+        let context = seam_carving::ImageContext {
             width: self.width,
             height: self.height,
         };
-        carver::mark_pixel_position(context, &mut self.image_matrix);
-        carver::mark_energy_map(context, &mut self.image_matrix);
-        carver::mark_seam_energy_map(context, &mut self.image_matrix);
-        carver::mark_seam(context, &mut self.image_matrix);
+        seam_carving::mark_pixel_position(context, &mut self.image_matrix);
+        seam_carving::mark_energy_map(context, &mut self.image_matrix);
+        seam_carving::mark_seam_energy_map(context, &mut self.image_matrix);
+        seam_carving::mark_seam(context, &mut self.image_matrix);
 
-        self.image_data = carver::get_image_data_from_pixels(context, &mut self.image_matrix);
+        self.image_data = seam_carving::get_image_data_from_pixels(context, &mut self.image_matrix);
     }
 
     pub fn delete_seam(&mut self) {
-        carver::remove_seam(
-            carver::ImageContext {
+        seam_carving::remove_seam(
+            seam_carving::ImageContext {
                 width: self.width,
                 height: self.height,
             },
             &mut self.image_matrix,
         );
 
-        self.image_data = carver::get_image_data_from_pixels(
-            carver::ImageContext {
+        self.image_data = seam_carving::get_image_data_from_pixels(
+            seam_carving::ImageContext {
                 width: self.width - 1,
                 height: self.height,
             },

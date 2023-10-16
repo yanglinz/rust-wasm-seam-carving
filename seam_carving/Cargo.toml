@@ -1,0 +1,17 @@
+[package]
+name = "seam_carving"
+version = "0.1.0"
+authors = ["Yanglin Zhao <hi@yanglinzhao.com>"]
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+
+[dev-dependencies]
+criterion = { version = "0.4", features = ["html_reports"] }
+
+[[bench]]
+name = "example"
+harness = false

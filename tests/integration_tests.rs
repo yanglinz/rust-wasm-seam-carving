@@ -17,7 +17,7 @@ mod integration {
         let (dimensions, image_data) = fixture::get_fixture_image("beach-1.jpeg");
 
         let mut carver =
-            seam_carving::SeamCarver::from_vec(image_data, dimensions.width, dimensions.height);
+            wasm_seam_carving::SeamCarver::from_vec(image_data, dimensions.width, dimensions.height);
         let steps = 100;
         for _ in 0..steps {
             carver.mark_seam();
@@ -39,7 +39,7 @@ mod integration {
     fn test_beach_flipped_example() {
         let (dimensions, image_data) = fixture::get_fixture_image("beach-1-flipped.jpeg");
         let mut carver =
-            seam_carving::SeamCarver::from_vec(image_data, dimensions.width, dimensions.height);
+            wasm_seam_carving::SeamCarver::from_vec(image_data, dimensions.width, dimensions.height);
         let steps = 100;
         for _ in 0..steps {
             carver.mark_seam();

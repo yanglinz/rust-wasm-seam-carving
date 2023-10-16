@@ -19,6 +19,7 @@
     "dev:js": "FAST_REFRESH=true craco start",
     "dev": "run-p dev:*",
     "build": "craco build",
+    "cleanbuild": "rm -rf build && rm -rf src/pkg && yarn build",
     "test": "craco test",
     "format": "prettier --write ./src/**/*.{js,css}"
   },

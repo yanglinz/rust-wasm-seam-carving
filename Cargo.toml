@@ -1,11 +1,11 @@
 [package]
-name = "seam_carving"
+name = "rust_wasm_seam_carving"
 version = "0.1.0"
-authors = ["Yanglin Zhao <yz1876@gmail.com>"]
+authors = ["Yanglin Zhao <hi@yanglinzhao.com>"]
 edition = "2018"
 
 [lib]
-name = "seam_carving"
+name = "wasm_seam_carving"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]

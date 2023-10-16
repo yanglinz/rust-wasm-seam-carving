@@ -8,7 +8,7 @@ pub struct ImageContext {
 #[derive(Copy, Clone)]
 struct PixelPosition {
     x: u32,
-    y: u32,
+y: u32,
 }
 
 // Binary represenation of whether a pixel is a seam.

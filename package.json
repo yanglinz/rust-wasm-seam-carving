@@ -30,8 +30,7 @@
     "preact-portal": "1.1.3",
     "preact-render-to-string": "6.2.2",
     "react": "npm:@preact/compat",
-    "react-dom": "npm:@preact/compat",
-    "wasm-pack": "0.12.1"
+    "react-dom": "npm:@preact/compat"
   },
   "devDependencies": {
     "@craco/craco": "6.2.0",

@@ -1,0 +1,38 @@
+name: Deploy Workflow
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'releases/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: volta-cli/action@v1
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - run: cargo install wasm-pack
+      - run: yarn install
+      - run: yarn build
+        env:
+          NODE_OPTIONS: "--openssl-legacy-provider"
+          PUBLIC_URL: "/rust-wasm-seam-carving/"
+      - id: deployment
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/
+
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

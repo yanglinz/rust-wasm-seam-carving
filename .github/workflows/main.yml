@@ -8,8 +8,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: volta-cli/action@v1
-      - run: which node && node --version
-      - run: which yarn && yarn --version
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - run: cargo install wasm-pack
       - run: yarn install
       - run: yarn build
 
@@ -17,9 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
       - run: |
           cargo fmt --check 
           (cd seam_carving && cargo fmt --check)

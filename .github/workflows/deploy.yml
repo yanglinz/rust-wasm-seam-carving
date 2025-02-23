@@ -1,0 +1,14 @@
+name: Deploy Workflow
+
+on: [push]
+
+jobs:
+  build_js:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: volta-cli/action@v1
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - run: cargo install wasm-pack
+      - run: yarn install
+      - run: yarn build

@@ -3,7 +3,7 @@ name: Deploy Workflow
 on: [push]
 
 jobs:
-  build_js:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -12,3 +12,20 @@ jobs:
       - run: cargo install wasm-pack
       - run: yarn install
       - run: yarn build
+        env:
+          NODE_OPTIONS: "--openssl-legacy-provider"
+          PUBLIC_URL: "/rust-wasm-seam-carving/"
+      - id: deployment
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

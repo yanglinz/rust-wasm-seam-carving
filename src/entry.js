@@ -154,7 +154,7 @@ function App() {
   useEffect(
     () =>
       canvasLoadExternalImage(dispatch, {
-        imageUrl: getDemoImages()["KGwK6n7rxSg"].url,
+        imageUrl: getDemoImages()["photo-1575252663512-b25714ec27f9"].url,
       }),
     []
   );
